@@ -1,0 +1,5 @@
+{
+  "name": "CardioExergy",
+  "description": "An application to analyze the exergy of the heart with aortic valve stenosis, based on the mathematical model by Roll et al. (2019). Users can adjust simulation parameters and visualize the thermodynamic results through a series of interactive charts.",
+  "requestFramePermissions": []
+}
