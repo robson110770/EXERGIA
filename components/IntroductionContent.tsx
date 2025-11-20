@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 // Helper Components for consistent styling
@@ -51,9 +52,22 @@ const IntroductionContent: React.FC = () => {
             </p>
 
             <SectionTitle>1.3 O QUE É ESTENOSE AÓRTICA</SectionTitle>
+            
+            <div className="flex flex-col items-center my-6">
+                <img 
+                    src="http://rodrigues.mat.br/wp-content/uploads/2025/11/Captura-de-Tela-2025-11-14-as-22.26.35.png" 
+                    alt="Ilustração da Estenose Aórtica e o fluxo sanguíneo" 
+                    className="rounded-lg shadow-md border border-gray-200 dark:border-gray-700 max-w-full h-auto"
+                />
+                <p className="text-xs text-gray-500 mt-2 text-center">
+                    Fonte: <a href="https://www.drdiegogaia.com.br/estenose-aortica-grave" target="_blank" rel="noopener noreferrer" className="hover:underline text-blue-500">https://www.drdiegogaia.com.br/estenose-aortica-grave</a>
+                </p>
+            </div>
+
             <p>
                 A estenose aórtica é uma condição cardíaca caracterizada pelo <Highlight>estreitamento anormal da abertura da válvula aórtica</Highlight>. Esta válvula controla o fluxo de sangue do ventrículo esquerdo (a principal câmara de bombeamento do coração) para a aorta (a maior artéria do corpo). A gravidade da condição é classificada pela medida da Área da Válvula Aórtica, cuja sigla é <Highlight>AVA</Highlight> (do inglês, <i>Aortic Valve Area</i>).
             </p>
+            
             <ul className="list-disc list-inside space-y-2 mt-2 pl-4">
                 <li><Highlight>Saudável:</Highlight> AVA acima de 2.0 cm².</li>
                 <li><Highlight>Estenose Leve:</Highlight> AVA entre 1.5 e 2.0 cm².</li>
