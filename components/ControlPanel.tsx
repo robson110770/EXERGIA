@@ -97,7 +97,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
             </h2>
             <hr className="border-gray-200 dark:border-gray-700 mb-6" />
             
-            <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar space-y-8">
+            <div className="flex-grow overflow-y-auto pr-2 custom-scrollbar space-y-6">
                 {/* Seção 1: Parâmetros Globais (Afetam ambos) */}
                 <div>
                      <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">
@@ -108,7 +108,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                             <InputField label="AVA Mínima" id="minAVA" value={params.control.minAVA} unit="cm²" min={0.1} max={5} step={0.1} onChange={handleCommonParamChange} />
                             <InputField label="AVA Máxima" id="maxAVA" value={params.control.maxAVA} unit="cm²" min={0.5} max={6} step={0.1} onChange={handleCommonParamChange} />
                         </div>
-                         {/* Removed Steps Input as requested */}
                     </div>
                 </div>
 
@@ -175,13 +174,26 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
 
                  <hr className="border-gray-200 dark:border-gray-700" />
 
-                 {/* Seção 3: Pontos de Interesse na Tabela + Botão */}
+                 {/* Botão Executar (Moved here) */}
+                 <div className="py-1">
+                    <button
+                        onClick={onRunSimulation}
+                        disabled={isLoading}
+                        className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white uppercase tracking-wide ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'} transition-colors`}
+                    >
+                        {isLoading ? 'SIMULANDO...' : 'EXECUTAR SIMULAÇÃO'}
+                    </button>
+                 </div>
+
+                 <hr className="border-gray-200 dark:border-gray-700" />
+
+                 {/* Seção 3: Pontos de Interesse na Tabela */}
                  <div>
                     <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">
                         VALORES DE AVA PARA ANÁLISE
                     </h3>
                     
-                    <div className="p-4 mb-6 rounded-md border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50 dark:bg-indigo-900/10">
+                    <div className="p-4 mb-2 rounded-md border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50 dark:bg-indigo-900/10">
                         <div className="grid grid-cols-2 gap-2 text-sm">
                              <div>
                                 <label className="block text-xs text-gray-500">Severa</label>
@@ -201,14 +213,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                              </div>
                         </div>
                     </div>
-
-                    <button
-                        onClick={onRunSimulation}
-                        disabled={isLoading}
-                        className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white uppercase tracking-wide ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'} transition-colors`}
-                    >
-                        {isLoading ? 'SIMULANDO...' : 'EXECUTAR SIMULAÇÃO'}
-                    </button>
                  </div>
             </div>
         </div>
