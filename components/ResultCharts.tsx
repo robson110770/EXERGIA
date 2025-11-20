@@ -25,7 +25,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
             work: "Trabalho",
             exBlood: "Ex. Sangue",
             exDestroyed: "Ex. Destruída",
-            titleA: "(a) Volume Sistólico",
+            titleA: "(a) Fluxo Sistólico",
             titleB: "(b) Queda de Pressão Aórtica",
             titleC: "(c) Metabolismo e Trabalho",
             titleD: "(d) Análise de Exergia (W)",
@@ -45,7 +45,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
             work: "Work",
             exBlood: "Blood Ex.",
             exDestroyed: "Destr. Ex.",
-            titleA: "(a) Stroke Volume",
+            titleA: "(a) Systolic Flow",
             titleB: "(b) Aortic Pressure Drop",
             titleC: "(c) Metabolism and Work",
             titleD: "(d) Exergy Analysis (W)",
@@ -151,7 +151,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                         <XAxis {...xAxisProps} />
-                        <YAxis label={{ value: 'mL', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} />
+                        <YAxis label={{ value: 'mL/s', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} />
                         <Tooltip />
                         {isComparative && <Legend layout="vertical" verticalAlign="middle" align="right" />}
                         <StenosisReferences />

@@ -90,7 +90,7 @@ const SingleAnalysis: React.FC<{ params: SimulationParams, tableAVAs: [number, n
                     <li><strong>Severe Stenosis:</strong> In the most advanced stage, metabolic demand reaches <Highlight>{format(severeData.m_heart)} W</Highlight> for a power of <Highlight>{format(severeData.w_heart)} W</Highlight>, demonstrating exacerbated energy consumption in the face of compromised hemodynamic performance.</li>
                 </ul>
                  <p className="mt-2">
-                     Paradoxically, the increase in cardiac work does not translate into improved pumping function. Effective stroke volume (<Code>V_syst</Code>) decreases from <Highlight>{format(healthyData.v_syst)} mL</Highlight> in physiological conditions to <Highlight>{format(severeData.v_syst)} mL</Highlight> in the severe stenosis scenario. This finding illustrates the decoupling between energy cost and hemodynamic efficacy, where higher metabolic expenditure results in lower circulatory yield.
+                     Paradoxically, the increase in cardiac work does not translate into improved pumping function. Effective systolic flow (<Code>V_syst</Code>) decreases from <Highlight>{format(healthyData.v_syst)} mL/s</Highlight> in physiological conditions to <Highlight>{format(severeData.v_syst)} mL/s</Highlight> in the severe stenosis scenario. This finding illustrates the decoupling between energy cost and hemodynamic efficacy, where higher metabolic expenditure results in lower circulatory yield.
                 </p>
 
                 <SectionTitle>Analysis of Exergy Efficiency and Irreversibilities</SectionTitle>
@@ -133,7 +133,7 @@ const SingleAnalysis: React.FC<{ params: SimulationParams, tableAVAs: [number, n
                 <li><strong>Estenose Severa:</strong> No estágio mais avançado, a demanda metabólica atinge <Highlight>{format(severeData.m_heart)} W</Highlight> para uma potência de <Highlight>{format(severeData.w_heart)} W</Highlight>, o que demonstra um consumo energético exacerbado em face de uma performance hemodinâmica comprometida.</li>
             </ul>
              <p className="mt-2">
-                 Paradoxalmente, o incremento no trabalho cardíaco não se traduz em uma melhoria da função de bombeamento. O fluxo sistólico efetivo (<Code>V_syst</Code>) decresce de <Highlight>{format(healthyData.v_syst)} mL</Highlight> em condições fisiológicas para <Highlight>{format(severeData.v_syst)} mL</Highlight> no cenário de estenose severa. Este achado ilustra o desacoplamento entre o custo energético e a eficácia hemodinâmica, onde um maior dispêndio metabólico resulta em um menor rendimento circulatório.
+                 Paradoxalmente, o incremento no trabalho cardíaco não se traduz em uma melhoria da função de bombeamento. O fluxo sistólico efetivo (<Code>V_syst</Code>) decresce de <Highlight>{format(healthyData.v_syst)} mL/s</Highlight> em condições fisiológicas para <Highlight>{format(severeData.v_syst)} mL/s</Highlight> no cenário de estenose severa. Este achado ilustra o desacoplamento entre o custo energético e a eficácia hemodinâmica, onde um maior dispêndio metabólico resulta em um menor rendimento circulatório.
             </p>
 
             <SectionTitle>Análise da Eficiência Exergética e Irreversibilidades</SectionTitle>

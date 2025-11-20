@@ -31,7 +31,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
             cd: "Coeficiente de Descarga",
             labels: {
                 A_eff: "Área Efetiva de Fluxo (Aeff)",
-                V_syst: "Volume Sistólico",
+                V_syst: "Fluxo Sistólico",
                 cardiac_output: "Débito Cardíaco",
                 Delta_P_aortic_mmHg: "Queda de Pressão Aórtica",
                 W_Heart: "Trabalho do Coração",
@@ -60,7 +60,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
             cd: "Discharge Coefficient",
             labels: {
                 A_eff: "Effective Flow Area (Aeff)",
-                V_syst: "Stroke Volume",
+                V_syst: "Systolic Flow",
                 cardiac_output: "Cardiac Output",
                 Delta_P_aortic_mmHg: "Aortic Pressure Drop",
                 W_Heart: "Heart Work",
@@ -91,7 +91,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
 
         const metrics = [
             { key: 'A_eff', label: t.labels.A_eff, unit: 'cm²' },
-            { key: 'V_syst', label: t.labels.V_syst, unit: 'mL' },
+            { key: 'V_syst', label: t.labels.V_syst, unit: 'mL/s' },
             { key: 'cardiac_output', label: t.labels.cardiac_output, unit: 'L/min' },
             { key: 'Delta_P_aortic_mmHg', label: t.labels.Delta_P_aortic_mmHg, unit: 'mmHg' },
             { key: 'W_Heart', label: t.labels.W_Heart, unit: 'W' },
