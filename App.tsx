@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { SimulationParams, SimulationResults } from './types';
 import { simulateHeartWithStenosis } from './services/simulationService';
@@ -8,8 +7,11 @@ import SummaryTable from './components/SummaryTable';
 import AnalysisContent from './components/AnalysisContent';
 import IntroductionContent from './components/IntroductionContent';
 import HelpContent from './components/HelpContent';
+import TeamContent from './components/TeamContent';
+import ActivitiesContent from './components/ActivitiesContent';
 
 const App: React.FC = () => {
+    // Removed isLandingPage state
     const [params, setParams] = useState<{
         control: SimulationParams;
         test: SimulationParams;
@@ -19,7 +21,7 @@ const App: React.FC = () => {
             maxAVA: 3.5,
             steps: 100,
             hr: 72,
-            temperature: 37.0,
+            temperature: 37.0, // Temperatura de referência padrão ajustada para 37.0°C
             c_d: 0.85,
         },
         test: {
@@ -27,7 +29,7 @@ const App: React.FC = () => {
             maxAVA: 3.5,
             steps: 100,
             hr: 72, 
-            temperature: 37.0,
+            temperature: 37.0, // Temperatura de referência padrão ajustada para 37.0°C
             c_d: 0.85,
         },
     });
@@ -36,7 +38,7 @@ const App: React.FC = () => {
         test: SimulationResults;
     } | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [view, setView] = useState<'introduction' | 'charts' | 'data' | 'analysis' | 'help'>('introduction');
+    const [view, setView] = useState<'introduction' | 'charts' | 'data' | 'analysis' | 'activities' | 'help' | 'team'>('introduction');
     const [tableAVAs, setTableAVAs] = useState<[number, number, number, number]>([1.0, 1.5, 2.0, 3.5]);
     const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
     const exportMenuRef = useRef<HTMLDivElement>(null);
@@ -97,8 +99,8 @@ Para uma análise mais fiel à fisiologia, esta implementação utiliza um **mod
 
 ### 1.1. Constantes Físicas e Fisiológicas
 - **ρ_bl (Densidade do sangue):** \`1060.0\` kg/m³
-- **T_Heart (Temperatura interna do coração):** \`38.8\` °C (\`311.95 K\`)
-- **T_int (Temperatura na região valvar):** \`311.95 K\` (assumida igual a \`T_Heart\`)
+- **T_Heart (Temperatura interna do coração):** \`38.8\` °C (Constante)
+- **T_int (Temperatura na região valvar):** Assumida igual a \`T_Heart\`
 - **t_E (Tempo de ejeção sistólica):** \`0.3\` s
 - **HR_ref (Frequência cardíaca de referência):** \`72.0\` bpm
 - **P_avg_mmHg (Pressão arterial média de referência):** \`100\` mmHg (\`≈ 13332.2 Pa\`)
@@ -246,8 +248,8 @@ Calculado usando a **Fórmula de Gorlin** (Seção 2.1).
     <h3>3.1. Parâmetros Físicos e Fisiológicos Fixos</h3>
     <ul class="param-list">
         <li><strong>ρ_bl (Densidade do sangue):</strong> <code>1060.0</code> kg/m³</li>
-        <li><strong>T_Heart (Temperatura interna):</strong> <code>38.8</code> °C (<code>311.95 K</code>)</li>
-        <li><strong>T_int (Temperatura na região valvar):</strong> <code>311.95 K</code></li>
+        <li><strong>T_Heart (Temperatura interna):</strong> <code>38.8</code> °C (Constante)</li>
+        <li><strong>T_int (Temperatura na região valvar):</strong> Assumida igual a <code>T_Heart</code></li>
         <li><strong>t_E (Tempo de ejeção sistólica):</strong> <code>0.3</code> s</li>
         <li><strong>HR_ref (Frequência cardíaca de referência):</strong> <code>72.0</code> bpm</li>
         <li><strong>P_avg_mmHg (Pressão arterial média de referência):</strong> <code>100</code> mmHg (<code>13332.2 Pa</code>)</li>
@@ -319,9 +321,11 @@ Calculado usando a **Fórmula de Gorlin** (Seção 2.1).
         URL.revokeObjectURL(url);
     };
     
-    const baseButtonClass = "px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 transition-colors";
-    const activeButtonClass = "bg-blue-600 text-white";
-    const inactiveButtonClass = "bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600";
+    const baseButtonClass = "px-4 py-2 text-sm font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-900 transition-all duration-200";
+    // Azul escuro para ativo
+    const activeButtonClass = "bg-blue-700 text-white shadow-md transform scale-105";
+    // Azul bem claro para inativo
+    const inactiveButtonClass = "bg-blue-50 text-blue-700 border border-blue-100 hover:bg-blue-100 hover:text-blue-900 dark:bg-gray-800 dark:text-blue-300 dark:border-gray-700 dark:hover:bg-gray-700";
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
@@ -414,11 +418,23 @@ Calculado usando a **Fórmula de Gorlin** (Seção 2.1).
                             >
                                 ANÁLISE DOS RESULTADOS
                             </button>
+                            <button
+                                onClick={() => setView('activities')}
+                                className={`${baseButtonClass} ${view === 'activities' ? activeButtonClass : inactiveButtonClass}`}
+                            >
+                                ATIVIDADES
+                            </button>
                              <button
                                 onClick={() => setView('help')}
                                 className={`${baseButtonClass} ${view === 'help' ? activeButtonClass : inactiveButtonClass}`}
                             >
                                 AJUDA
+                            </button>
+                            <button
+                                onClick={() => setView('team')}
+                                className={`${baseButtonClass} ${view === 'team' ? activeButtonClass : inactiveButtonClass}`}
+                            >
+                                EQUIPE
                             </button>
                         </div>
                         <div className="animate-fade-in">
@@ -426,7 +442,9 @@ Calculado usando a **Fórmula de Gorlin** (Seção 2.1).
                             {view === 'charts' && <ResultCharts results={results} isLoading={isLoading} isComparative={isComparative} />}
                             {view === 'data' && <SummaryTable results={results} isLoading={isLoading} isComparative={isComparative} tableAVAs={tableAVAs} params={params} />}
                             {view === 'analysis' && <AnalysisContent results={results} isLoading={isLoading} isComparative={isComparative} params={params} tableAVAs={tableAVAs} />}
+                            {view === 'activities' && <ActivitiesContent />}
                             {view === 'help' && <HelpContent />}
+                            {view === 'team' && <TeamContent />}
                         </div>
                     </div>
                 </div>

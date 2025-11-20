@@ -1,13 +1,12 @@
 
-
 import React from 'react';
-import { SimulationParams, SimulationResults } from '../types';
+import { SimulationParams, SimulationResults, SimulationPoint } from '../types';
+import { calculateSinglePoint } from '../services/simulationService';
 
 interface AnalysisContentProps {
     results: { control: SimulationResults; test: SimulationResults } | null;
     isLoading: boolean;
     isComparative: boolean;
-    // FIX: Changed params.test from SimulationResults to SimulationParams to match the data being passed and used.
     params: { control: SimulationParams; test: SimulationParams };
     tableAVAs: [number, number, number, number];
 }
@@ -26,14 +25,6 @@ const Highlight: React.FC<{ children: React.ReactNode; className?: string }> = (
 const Code: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <code>{children}</code>
 );
-
-// Helper function to find the closest index for a given AVA
-const findClosestIndex = (arr: number[], target: number): number => {
-    if (!arr || arr.length === 0) return -1;
-    return arr.reduce((prev, curr, index) =>
-        (Math.abs(curr - target) < Math.abs(arr[prev] - target) ? index : prev),
-        0);
-};
 
 // Helper to format numbers for display, preventing errors
 const format = (value: number | undefined, decimals = 2): string => {
@@ -62,25 +53,23 @@ const getChange = (control: number, test: number): { text: string; color: string
 
 
 // Component for Single Simulation Analysis
-const SingleAnalysis: React.FC<{ results: SimulationResults, tableAVAs: [number, number, number, number] }> = ({ results, tableAVAs }) => {
-    const indices = tableAVAs.map(ava => findClosestIndex(results.AVA, ava));
-
-    if (indices.some(index => index === -1)) {
-        return <p>Dados insuficientes para análise. Verifique os parâmetros de simulação.</p>;
-    }
+const SingleAnalysis: React.FC<{ params: SimulationParams, tableAVAs: [number, number, number, number] }> = ({ params, tableAVAs }) => {
     
-    const getDataPoint = (index: number) => ({
-        ava: results.AVA[index],
-        w_heart: results.W_Heart[index],
-        m_heart: results.M_Heart[index],
-        delta_p: results.Delta_P_aortic_mmHg[index],
-        v_syst: results.V_syst[index],
-        eta1: results.eta1[index],
-        eta2: results.eta2[index],
-        b_d_valves: results.B_d_valves[index]
+    // Calculate exact points for analysis
+    const points = tableAVAs.map(ava => calculateSinglePoint(ava, params));
+    
+    const getDataPoint = (point: SimulationPoint) => ({
+        ava: point.AVA,
+        w_heart: point.W_Heart,
+        m_heart: point.M_Heart,
+        delta_p: point.Delta_P_aortic_mmHg,
+        v_syst: point.V_syst,
+        eta1: point.eta1,
+        eta2: point.eta2,
+        b_d_valves: point.B_d_valves
     });
 
-    const [severeData, moderateData, mildData, healthyData] = indices.map(getDataPoint);
+    const [severeData, moderateData, mildData, healthyData] = points.map(getDataPoint);
 
     return (
         <>
@@ -138,7 +127,7 @@ const StageComparison: React.FC<{
 
     return (
         <div className="mt-4 p-3 border-l-4 border-gray-400 dark:border-gray-500 bg-gray-500/10 rounded-r-md">
-            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Cenário: {stageLabel} (AVA ≈ {format(controlData.ava, 1)} cm²)</h4>
+            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Cenário: {stageLabel} (AVA = {format(controlData.ava, 2)} cm²)</h4>
             <ul className="text-sm list-disc list-inside space-y-1 mt-2">
                 <li>
                     <strong>Metabolismo Cardíaco:</strong> <Highlight className={mHeartChange.color}>{mHeartChange.text}</Highlight> (de {format(controlData.m_heart)} para {format(testData.m_heart)} W).
@@ -160,12 +149,9 @@ const StageComparison: React.FC<{
 
 // Component for Comparative Simulation Analysis
 const ComparativeAnalysis: React.FC<{
-    controlResults: SimulationResults;
-    testResults: SimulationResults;
-    // FIX: Changed params.test from SimulationResults to SimulationParams to match the data being passed and used.
     params: { control: SimulationParams; test: SimulationParams };
     tableAVAs: [number, number, number, number];
-}> = ({ controlResults, testResults, params, tableAVAs }) => {
+}> = ({ params, tableAVAs }) => {
     const { control, test } = params;
     const changes = [];
 
@@ -202,26 +188,19 @@ const ComparativeAnalysis: React.FC<{
     }
 
     const stageLabels = ['Estenose Severa', 'Estenose Moderada', 'Estenose Leve', 'Fisiológico'];
-    const controlIndices = tableAVAs.map(ava => findClosestIndex(controlResults.AVA, ava));
-    const testIndices = tableAVAs.map(ava => findClosestIndex(testResults.AVA, ava));
+    
+    // Calculate exact points
+    const allControlPoints = tableAVAs.map(ava => calculateSinglePoint(ava, control));
+    const allTestPoints = tableAVAs.map(ava => calculateSinglePoint(ava, test));
 
-    if (controlIndices.some(i => i === -1) || testIndices.some(i => i === -1)) {
-        return <p>Dados insuficientes para análise comparativa.</p>;
-    }
-
-    const getData = (results: SimulationResults, indices: number[]) => {
-        return indices.map(index => ({
-            ava: results.AVA[index],
-            w_heart: results.W_Heart[index],
-            m_heart: results.M_Heart[index],
-            delta_p: results.Delta_P_aortic_mmHg[index],
-            eta1: results.eta1[index],
-            eta2: results.eta2[index],
-        }));
-    };
-
-    const allControlData = getData(controlResults, controlIndices);
-    const allTestData = getData(testResults, testIndices);
+    const formatDataForComparison = (point: SimulationPoint) => ({
+        ava: point.AVA,
+        w_heart: point.W_Heart,
+        m_heart: point.M_Heart,
+        delta_p: point.Delta_P_aortic_mmHg,
+        eta1: point.eta1,
+        eta2: point.eta2,
+    });
 
     return (
         <>
@@ -243,8 +222,8 @@ const ComparativeAnalysis: React.FC<{
                 <StageComparison
                     key={label}
                     stageLabel={label}
-                    controlData={allControlData[index]}
-                    testData={allTestData[index]}
+                    controlData={formatDataForComparison(allControlPoints[index])}
+                    testData={formatDataForComparison(allTestPoints[index])}
                 />
             ))}
 
@@ -292,9 +271,9 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({ results, isLoading, i
                 Análise Dinâmica dos Resultados da Simulação
             </h2>
             {isComparative ? (
-                <ComparativeAnalysis controlResults={results.control} testResults={results.test} params={params} tableAVAs={tableAVAs} />
+                <ComparativeAnalysis params={params} tableAVAs={tableAVAs} />
             ) : (
-                <SingleAnalysis results={results.control} tableAVAs={tableAVAs} />
+                <SingleAnalysis params={params.control} tableAVAs={tableAVAs} />
             )}
         </div>
     );

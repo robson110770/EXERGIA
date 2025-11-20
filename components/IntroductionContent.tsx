@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 // Helper Components for consistent styling
@@ -112,6 +111,22 @@ const IntroductionContent: React.FC = () => {
                 <li><Highlight>Gráfico (e) - Eficiência Exergética η₁:</Highlight> Apresenta a eficiência do músculo cardíaco como um "motor biológico". Este valor percentual indica quão bem o coração converte energia química em trabalho mecânico.</li>
                 <li><Highlight>Gráfico (f) - Eficiência Exergética η₂:</Highlight> Mede a eficiência global do sistema cardiovascular (coração + válvula + sangue). Este percentual revela que parte da energia metabólica inicial é de fato utilizada para impulsionar o sangue pelo corpo, já considerando as perdas na válvula. A queda de η₂ é um indicador chave da gravidade da doença.</li>
             </ul>
+
+            <SectionTitle>2.4 CONSIDERAÇÕES TÉRMICAS</SectionTitle>
+            <p>
+                Na termodinâmica, a <Highlight>Temperatura de Referência (T₀)</Highlight> é a temperatura do "ambiente" para o qual o calor é rejeitado. No contexto deste modelo fisiológico:
+            </p>
+            <ul className="list-disc list-inside space-y-2 mt-2 pl-4">
+                <li>
+                    <strong>Temperatura de Referência (T₀):</strong> Representa a temperatura média do corpo humano (o ambiente imediato do coração), geralmente definida em <Highlight>37.0°C</Highlight>.
+                </li>
+                <li>
+                    <strong>Temperatura do Coração (T<sub>Heart</sub>):</strong> É a temperatura operacional do músculo cardíaco e do sangue intraventricular. Devido à intensa atividade metabólica, o coração opera a uma temperatura ligeiramente superior à do corpo (ex: <Highlight>38.8°C</Highlight>).
+                </li>
+            </ul>
+            <p className="mt-2">
+                A diferença entre T<sub>Heart</sub> e T₀, embora pequena, contribui para o cálculo da exergia física térmica do sangue.
+            </p>
 
         </div>
     );

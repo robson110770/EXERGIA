@@ -1,6 +1,7 @@
 
 import React, { useMemo } from 'react';
-import { SimulationParams, SimulationResults } from '../types';
+import { SimulationParams, SimulationResults, SimulationPoint } from '../types';
+import { calculateSinglePoint } from '../services/simulationService';
 
 interface SummaryTableProps {
     results: { control: SimulationResults; test: SimulationResults } | null;
@@ -10,28 +11,22 @@ interface SummaryTableProps {
     params: { control: SimulationParams; test: SimulationParams };
 }
 
-const findClosestIndex = (arr: number[], target: number): number => {
-    if (!arr || arr.length === 0) return -1;
-    return arr.reduce((prev, curr, index) => 
-        (Math.abs(curr - target) < Math.abs(arr[prev] - target) ? index : prev), 
-    0);
-};
-
 const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isComparative, tableAVAs, params }) => {
     const summaryData = useMemo(() => {
-        if (!results) return null;
+        if (!params) return null;
 
-        const getIndicesFor = (res: SimulationResults, targetAVAs: number[]) => {
-           return targetAVAs.map(target => findClosestIndex(res.AVA, target));
+        // Calculate exact points instead of searching for closest indices
+        const calculatePointsFor = (p: SimulationParams, targets: number[]) => {
+           return targets.map(target => calculateSinglePoint(target, p));
         };
 
-        const indices = {
-            control: getIndicesFor(results.control, tableAVAs),
-            test: getIndicesFor(results.test, tableAVAs),
+        const points = {
+            control: calculatePointsFor(params.control, tableAVAs),
+            test: calculatePointsFor(params.test, tableAVAs),
         };
 
         const metrics = [
-            { key: 'AVA', label: 'Área Válvula Aórtica', unit: 'cm²' },
+            { key: 'A_eff', label: 'Área Efetiva de Fluxo (Aeff)', unit: 'cm²' },
             { key: 'V_syst', label: 'Fluxo Sistólico', unit: 'mL/s' },
             { key: 'cardiac_output', label: 'Débito Cardíaco', unit: 'L/min' },
             { key: 'Delta_P_aortic_mmHg', label: 'Queda de Pressão Aórtica', unit: 'mmHg' },
@@ -49,9 +44,9 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
         const conditionTitles = tableAVAs.map((ava, index) => `${conditionLabels[index]} (AVA = ${ava.toFixed(2)} cm²)`);
 
 
-        return { indices, metrics, conditionTitles };
+        return { points, metrics, conditionTitles };
 
-    }, [results, tableAVAs]);
+    }, [tableAVAs, params]);
 
     if (isLoading) {
         return (
@@ -64,7 +59,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
         );
     }
     
-    if (!results || !summaryData || !params) {
+    if (!summaryData || !params) {
         return (
              <div className="flex justify-center items-center h-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
                 <p>Nenhum dado para exibir. Execute a simulação.</p>
@@ -72,7 +67,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
         );
     }
 
-    const { indices, metrics, conditionTitles } = summaryData;
+    const { points, metrics, conditionTitles } = summaryData;
     
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
@@ -119,7 +114,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                     </tr>
                      <tr className="bg-gray-100 dark:bg-gray-900/50 border-b dark:border-gray-700 font-semibold">
                          <th scope="row" className="px-6 py-3 font-semibold text-gray-700 dark:text-gray-300 whitespace-nowrap">
-                            Temperatura
+                            Temperatura Ref.
                             <span className="text-xs text-gray-500 ml-1">(°C)</span>
                         </th>
                         {conditionTitles.map((title) => (
@@ -160,10 +155,9 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                                 <span className="text-xs text-gray-500 ml-1">({metric.unit})</span>
                             </th>
                             {conditionTitles.map((title, index) => {
-                                const controlIdx = indices.control[index];
-                                const testIdx = indices.test[index];
-                                const controlValue = (results.control[metric.key as keyof SimulationResults][controlIdx] as number).toFixed(2);
-                                const testValue = (results.test[metric.key as keyof SimulationResults][testIdx] as number).toFixed(2);
+                                // Use exact calculated point
+                                const controlValue = (points.control[index][metric.key as keyof SimulationPoint] as number).toFixed(2);
+                                const testValue = (points.test[index][metric.key as keyof SimulationPoint] as number).toFixed(2);
                                 
                                 return (
                                     <React.Fragment key={title}>

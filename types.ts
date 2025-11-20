@@ -4,12 +4,13 @@ export interface SimulationParams {
   maxAVA: number;
   steps: number;
   hr: number;
-  temperature: number;
+  temperature: number; // Reference Temperature (T0)
   c_d: number;
 }
 
 export interface SimulationResults {
   AVA: number[];
+  A_eff: number[];
   V_syst: number[];
   cardiac_output: number[];
   Delta_P_aortic_mmHg: number[];
@@ -24,6 +25,25 @@ export interface SimulationResults {
   B_d_heart: number[];
   eta1: number[];
   eta2: number[];
+}
+
+export interface SimulationPoint {
+  AVA: number;
+  A_eff: number;
+  V_syst: number;
+  cardiac_output: number;
+  Delta_P_aortic_mmHg: number;
+  W_Heart: number;
+  M_Heart: number;
+  B_M: number;
+  B_QM: number;
+  Delta_B_blood: number;
+  B_d_mitral: number;
+  B_d_aortic: number;
+  B_d_valves: number;
+  B_d_heart: number;
+  eta1: number;
+  eta2: number;
 }
 
 export interface ChartDataPoint {

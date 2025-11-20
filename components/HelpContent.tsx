@@ -52,6 +52,9 @@ const HelpContent: React.FC = () => {
                 <li>
                     <Highlight>Relatórios Automáticos:</Highlight> A aba "Análise dos Resultados" gera uma interpretação textual dinâmica baseada nos dados simulados, explicando os fenômenos físicos observados.
                 </li>
+                <li>
+                    <Highlight>Atividades Sugeridas:</Highlight> A aba "Atividades" oferece um conjunto de roteiros de simulação guiados. Estes exercícios didáticos propõem cenários específicos (como o impacto da taquicardia ou da geometria valvar) para explorar conceitos teóricos na prática, incluindo instruções de configuração, pontos de análise e conclusões ocultas para estimular o raciocínio ativo.
+                </li>
             </ul>
 
             <MainHeader>2. DOCUMENTAÇÃO TÉCNICA</MainHeader>
