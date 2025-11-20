@@ -1,7 +1,9 @@
+
 import React, { useMemo } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, ReferenceArea } from 'recharts';
 import { SimulationResults } from '../types';
 import ChartCard from './ChartCard';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ResultChartsProps {
     results: { control: SimulationResults; test: SimulationResults } | null;
@@ -10,6 +12,52 @@ interface ResultChartsProps {
 }
 
 const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isComparative }) => {
+    const { language } = useLanguage();
+    
+    const t = {
+        pt: {
+            loading: "Carregando...",
+            noData: "Nenhum dado para exibir. Execute a simulação.",
+            ava: "Área Válvula Aórtica (cm²)",
+            control: "Controle",
+            test: "Teste",
+            metabolism: "Metabolismo",
+            work: "Trabalho",
+            exBlood: "Ex. Sangue",
+            exDestroyed: "Ex. Destruída",
+            titleA: "(a) Volume Sistólico",
+            titleB: "(b) Queda de Pressão Aórtica",
+            titleC: "(c) Metabolismo e Trabalho",
+            titleD: "(d) Análise de Exergia (W)",
+            titleE: "(e) Eficiência Exergética η₁",
+            titleF: "(f) Eficiência Exergética η₂",
+            eff: "Eficiência (%)",
+            power: "Potência (W)",
+            exergy: "Exergia (W)"
+        },
+        en: {
+            loading: "Loading...",
+            noData: "No data to display. Run the simulation.",
+            ava: "Aortic Valve Area (cm²)",
+            control: "Control",
+            test: "Test",
+            metabolism: "Metabolism",
+            work: "Work",
+            exBlood: "Blood Ex.",
+            exDestroyed: "Destr. Ex.",
+            titleA: "(a) Stroke Volume",
+            titleB: "(b) Aortic Pressure Drop",
+            titleC: "(c) Metabolism and Work",
+            titleD: "(d) Exergy Analysis (W)",
+            titleE: "(e) Exergy Efficiency η₁",
+            titleF: "(f) Exergy Efficiency η₂",
+            eff: "Efficiency (%)",
+            power: "Power (W)",
+            exergy: "Exergy (W)"
+        }
+    }[language];
+
+
     const { chartData, xAxisTicks, xAxisDomain } = useMemo(() => {
         if (!results) {
             return { chartData: null, xAxisTicks: [], xAxisDomain: [0, 1] };
@@ -67,7 +115,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
     if (!chartData) {
         return (
              <div className="flex justify-center items-center h-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-                <p>Nenhum dado para exibir. Execute a simulação.</p>
+                <p>{t.noData}</p>
             </div>
         );
     }
@@ -75,7 +123,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
     const xAxisProps = {
         dataKey: "AVA",
         height: 40,
-        label: { value: 'Área Válvula Aórtica (cm²)', position: 'insideBottom' },
+        label: { value: t.ava, position: 'insideBottom' },
         tick: { fontSize: 12 },
         type: "number" as const,
         domain: xAxisDomain,
@@ -98,22 +146,22 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ChartCard title="(a) Fluxo Sistólico">
+            <ChartCard title={t.titleA}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                         <XAxis {...xAxisProps} />
-                        <YAxis label={{ value: 'mL/s', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} />
+                        <YAxis label={{ value: 'mL', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} />
                         <Tooltip />
                         {isComparative && <Legend layout="vertical" verticalAlign="middle" align="right" />}
                         <StenosisReferences />
-                        <Line type="monotone" dataKey="V_syst_control" name="Controle" stroke="#3b82f6" strokeWidth={2} dot={false} />
-                        {isComparative && <Line type="monotone" dataKey="V_syst_test" name="Teste" stroke="#f97316" strokeWidth={2} dot={false} />}
+                        <Line type="monotone" dataKey="V_syst_control" name={t.control} stroke="#3b82f6" strokeWidth={2} dot={false} />
+                        {isComparative && <Line type="monotone" dataKey="V_syst_test" name={t.test} stroke="#f97316" strokeWidth={2} dot={false} />}
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="(b) Queda de Pressão Aórtica">
+            <ChartCard title={t.titleB}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -122,74 +170,74 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                         <Tooltip />
                         {isComparative && <Legend layout="vertical" verticalAlign="middle" align="right" />}
                         <StenosisReferences />
-                        <Line type="monotone" dataKey="Delta_P_aortic_mmHg_control" name="Controle" stroke="#3b82f6" strokeWidth={2} dot={false} />
-                        {isComparative && <Line type="monotone" dataKey="Delta_P_aortic_mmHg_test" name="Teste" stroke="#f97316" strokeWidth={2} dot={false} />}
+                        <Line type="monotone" dataKey="Delta_P_aortic_mmHg_control" name={t.control} stroke="#3b82f6" strokeWidth={2} dot={false} />
+                        {isComparative && <Line type="monotone" dataKey="Delta_P_aortic_mmHg_test" name={t.test} stroke="#f97316" strokeWidth={2} dot={false} />}
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="(c) Metabolismo e Trabalho">
+            <ChartCard title={t.titleC}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                         <XAxis {...xAxisProps}/>
-                        <YAxis label={{ value: 'Potência (W)', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} />
+                        <YAxis label={{ value: t.power, angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} />
                         <Tooltip />
                         <Legend layout="vertical" verticalAlign="middle" align="right" />
                         <StenosisReferences />
-                        <Line type="monotone" dataKey="M_Heart_control" name={isComparative ? "Metabolismo (Controle)" : "Metabolismo"} stroke="#10b981" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="W_Heart_control" name={isComparative ? "Trabalho (Controle)" : "Trabalho"} stroke="#a855f7" strokeWidth={2} dot={false} />
-                        {isComparative && <Line type="monotone" dataKey="M_Heart_test" name="Metabolismo (Teste)" stroke="#3b82f6" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
-                        {isComparative && <Line type="monotone" dataKey="W_Heart_test" name="Trabalho (Teste)" stroke="#ec4899" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        <Line type="monotone" dataKey="M_Heart_control" name={isComparative ? `${t.metabolism} (${t.control})` : t.metabolism} stroke="#10b981" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="W_Heart_control" name={isComparative ? `${t.work} (${t.control})` : t.work} stroke="#a855f7" strokeWidth={2} dot={false} />
+                        {isComparative && <Line type="monotone" dataKey="M_Heart_test" name={`${t.metabolism} (${t.test})`} stroke="#3b82f6" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        {isComparative && <Line type="monotone" dataKey="W_Heart_test" name={`${t.work} (${t.test})`} stroke="#ec4899" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>
             
-            <ChartCard title="(d) Análise de Exergia (W)">
+            <ChartCard title={t.titleD}>
                  <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                         <XAxis {...xAxisProps} />
-                        <YAxis label={{ value: 'Exergia (W)', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}}/>
+                        <YAxis label={{ value: t.exergy, angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}}/>
                         <Tooltip />
                         <Legend layout="vertical" verticalAlign="middle" align="right" />
                         <StenosisReferences />
-                        <Line type="monotone" dataKey="Delta_B_blood_control" name={isComparative ? "Sangue (Controle)" : "Ex. Sangue"} stroke="#3b82f6" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="B_d_valves_control" name={isComparative ? "Destruída (Controle)" : "Ex. Destruída"} stroke="#ef4444" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="Delta_B_blood_control" name={isComparative ? `${t.exBlood} (${t.control})` : t.exBlood} stroke="#3b82f6" strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="B_d_valves_control" name={isComparative ? `${t.exDestroyed} (${t.control})` : t.exDestroyed} stroke="#ef4444" strokeWidth={2} dot={false} />
 
-                        {isComparative && <Line type="monotone" dataKey="Delta_B_blood_test" name="Sangue (Teste)" stroke="#f97316" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
-                        {isComparative && <Line type="monotone" dataKey="B_d_valves_test" name="Destruída (Teste)" stroke="#eab308" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        {isComparative && <Line type="monotone" dataKey="Delta_B_blood_test" name={`${t.exBlood} (${t.test})`} stroke="#f97316" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        {isComparative && <Line type="monotone" dataKey="B_d_valves_test" name={`${t.exDestroyed} (${t.test})`} stroke="#eab308" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
 
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="(e) Eficiência Exergética η₁">
+            <ChartCard title={t.titleE}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                         <XAxis {...xAxisProps} />
-                        <YAxis domain={[0, 'dataMax + 2']} label={{ value: 'Eficiência (%)', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} tickFormatter={(value) => `${Math.round(value)}`} />
+                        <YAxis domain={[0, 'dataMax + 2']} label={{ value: t.eff, angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} tickFormatter={(value) => `${Math.round(value)}`} />
                         <Tooltip />
                         {isComparative && <Legend layout="vertical" verticalAlign="middle" align="right" />}
                         <StenosisReferences />
-                        <Line type="monotone" dataKey="eta1_control" name={isComparative ? "η₁ (Controle)" : "η₁"} stroke="#3b82f6" strokeWidth={2} dot={false} />
-                        {isComparative && <Line type="monotone" dataKey="eta1_test" name="η₁ (Teste)" stroke="#f97316" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        <Line type="monotone" dataKey="eta1_control" name={isComparative ? `η₁ (${t.control})` : "η₁"} stroke="#3b82f6" strokeWidth={2} dot={false} />
+                        {isComparative && <Line type="monotone" dataKey="eta1_test" name={`η₁ (${t.test})`} stroke="#f97316" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title="(f) Eficiência Exergética η₂">
+            <ChartCard title={t.titleF}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
                         <XAxis {...xAxisProps} />
-                        <YAxis domain={[0, 'dataMax + 2']} label={{ value: 'Eficiência (%)', angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} tickFormatter={(value) => `${Math.round(value)}`} />
+                        <YAxis domain={[0, 'dataMax + 2']} label={{ value: t.eff, angle: -90, position: 'insideLeft' }} tick={{fontSize: 12}} tickFormatter={(value) => `${Math.round(value)}`} />
                         <Tooltip />
                         {isComparative && <Legend layout="vertical" verticalAlign="middle" align="right" />}
                         <StenosisReferences />
-                        <Line type="monotone" dataKey="eta2_control" name={isComparative ? "η₂ (Controle)" : "η₂"} stroke="#10b981" strokeWidth={2} dot={false} />
-                        {isComparative && <Line type="monotone" dataKey="eta2_test" name="η₂ (Teste)" stroke="#14b8a6" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        <Line type="monotone" dataKey="eta2_control" name={isComparative ? `η₂ (${t.control})` : "η₂"} stroke="#10b981" strokeWidth={2} dot={false} />
+                        {isComparative && <Line type="monotone" dataKey="eta2_test" name={`η₂ (${t.test})`} stroke="#14b8a6" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>

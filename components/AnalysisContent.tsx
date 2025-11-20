@@ -2,6 +2,7 @@
 import React from 'react';
 import { SimulationParams, SimulationResults, SimulationPoint } from '../types';
 import { calculateSinglePoint } from '../services/simulationService';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface AnalysisContentProps {
     results: { control: SimulationResults; test: SimulationResults } | null;
@@ -35,18 +36,18 @@ const format = (value: number | undefined, decimals = 2): string => {
 };
 
 // Helper to calculate and describe percentage change robustly
-const getChange = (control: number, test: number): { text: string; color: string } => {
+const getChange = (control: number, test: number, language: 'pt' | 'en'): { text: string; color: string } => {
     if (isNaN(control) || isNaN(test) || control === 0) {
-        return { text: 'uma alteração indeterminada', color: 'text-gray-500' };
+        return { text: language === 'pt' ? 'uma alteração indeterminada' : 'an indeterminate change', color: 'text-gray-500' };
     }
     const percentChange = ((test - control) / Math.abs(control)) * 100;
     if (Math.abs(percentChange) < 0.1) {
-        return { text: 'uma mudança insignificante', color: 'text-gray-500' };
+        return { text: language === 'pt' ? 'uma mudança insignificante' : 'an insignificant change', color: 'text-gray-500' };
     }
-    const direction = percentChange > 0 ? 'um aumento' : 'uma redução';
+    const direction = percentChange > 0 ? (language === 'pt' ? 'um aumento' : 'an increase') : (language === 'pt' ? 'uma redução' : 'a reduction');
     const color = percentChange > 0 ? 'text-orange-500' : 'text-green-500';
     return {
-        text: `${direction} de ${format(Math.abs(percentChange), 1)}%`,
+        text: `${direction} ${language === 'pt' ? 'de' : 'of'} ${format(Math.abs(percentChange), 1)}%`,
         color,
     };
 };
@@ -54,6 +55,7 @@ const getChange = (control: number, test: number): { text: string; color: string
 
 // Component for Single Simulation Analysis
 const SingleAnalysis: React.FC<{ params: SimulationParams, tableAVAs: [number, number, number, number] }> = ({ params, tableAVAs }) => {
+    const { language } = useLanguage();
     
     // Calculate exact points for analysis
     const points = tableAVAs.map(ava => calculateSinglePoint(ava, params));
@@ -71,6 +73,50 @@ const SingleAnalysis: React.FC<{ params: SimulationParams, tableAVAs: [number, n
 
     const [severeData, moderateData, mildData, healthyData] = points.map(getDataPoint);
 
+    if (language === 'en') {
+        return (
+            <>
+                <p>
+                    This analysis evaluates the hemodynamic and thermodynamic impact of progressive aortic stenosis. The simulation employs a <Highlight>dynamic metabolism model</Highlight>, where myocardial energy expenditure is a direct function of the workload imposed on the left ventricle. The pathology stages are stratified based on user-defined Aortic Valve Area (AVA) values for the following scenarios: <Highlight>{format(healthyData.ava, 2)} cm²</Highlight> (Healthy), <Highlight>{format(mildData.ava, 2)} cm²</Highlight> (Mild Stenosis), <Highlight>{format(moderateData.ava, 2)} cm²</Highlight> (Moderate Stenosis), and <Highlight>{format(severeData.ava, 2)} cm²</Highlight> (Severe Stenosis).
+                </p>
+
+                <SectionTitle>Impact of Stenosis on Metabolism and Heart Work</SectionTitle>
+                <p>
+                    Stenosis progression imposes a chronic pressure overload on the left ventricle. To maintain cardiac output, the myocardium must generate a higher systolic intraventricular pressure, which entails a direct increase in oxygen consumption and, consequently, metabolic rate. The model simulates this compensatory mechanism, evidencing a positive correlation between AVA reduction and the consequent increase in both <Highlight>heart work</Highlight> (<Code>W_Heart</Code>) and <Highlight>metabolic rate</Highlight> (<Code>M_Heart</Code>).
+                </p>
+                <ul className="list-disc list-inside space-y-2 mt-2 pl-4">
+                    <li><strong>Healthy Scenario:</strong> Under normal conditions, the myocardium operates with a metabolic rate of <Highlight>{format(healthyData.m_heart)} W</Highlight> to generate mechanical power of <Highlight>{format(healthyData.w_heart)} W</Highlight>.</li>
+                    <li><strong>Moderate Stenosis:</strong> Elevated workload requires an increase in metabolic rate to <Highlight>{format(moderateData.m_heart)} W</Highlight>, corresponding to a power of <Highlight>{format(moderateData.w_heart)} W</Highlight>.</li>
+                    <li><strong>Severe Stenosis:</strong> In the most advanced stage, metabolic demand reaches <Highlight>{format(severeData.m_heart)} W</Highlight> for a power of <Highlight>{format(severeData.w_heart)} W</Highlight>, demonstrating exacerbated energy consumption in the face of compromised hemodynamic performance.</li>
+                </ul>
+                 <p className="mt-2">
+                     Paradoxically, the increase in cardiac work does not translate into improved pumping function. Effective stroke volume (<Code>V_syst</Code>) decreases from <Highlight>{format(healthyData.v_syst)} mL</Highlight> in physiological conditions to <Highlight>{format(severeData.v_syst)} mL</Highlight> in the severe stenosis scenario. This finding illustrates the decoupling between energy cost and hemodynamic efficacy, where higher metabolic expenditure results in lower circulatory yield.
+                </p>
+
+                <SectionTitle>Analysis of Exergy Efficiency and Irreversibilities</SectionTitle>
+                <p>
+                    Exergy analysis, through efficiencies <Code>η₁</Code> and <Code>η₂</Code>, allows rigorous quantification of inefficiency sources in the cardiovascular system under aortic stenosis.
+                </p>
+                 <ul className="list-disc list-inside space-y-2 mt-2 pl-4">
+                    <li>
+                        <strong>Exergy Efficiency η₁ (Conversion Efficiency):</strong> This parameter quantifies the efficacy of the myocardium in transducing metabolic exergy into mechanical power. Results indicate that <Code>η₁</Code> exhibits <Highlight>relative stability or marginal decline</Highlight>, varying from <Highlight>{format(healthyData.eta1)}%</Highlight> (Healthy) to <Highlight>{format(severeData.eta1)}%</Highlight> (Severe). Such behavior suggests that the cardiomyocyte contractile machinery maintains its intrinsic efficiency, adapting to increased demand through greater energy flux, rather than a fundamental alteration in its conversion efficiency.
+                    </li>
+                    <li>
+                        <strong>Exergy Efficiency η₂ (Hemodynamic Efficiency):</strong> This indicator evaluates global system efficiency, representing the fraction of metabolic exergy effectively converted into blood flow exergy change. A <Highlight className="text-red-500">sharp decline</Highlight> is observed in this metric with pathology progression, decreasing from <Highlight>{format(healthyData.eta2)}%</Highlight> (Healthy) to a residual value of <Highlight>{format(severeData.eta2)}%</Highlight> (Severe).
+                    </li>
+                </ul>
+                <p className="mt-2">
+                    The abrupt drop in <Code>η₂</Code> is primarily attributable to the exponential increase in the <Highlight>exergy destruction rate</Highlight> in the valves (<Code>B_d_valves</Code>). This portion of exergy, which rises from <Highlight>{format(healthyData.b_d_valves)} W</Highlight> to <Highlight>{format(severeData.b_d_valves)} W</Highlight>, represents thermodynamic irreversibilities (entropy generation) associated with turbulent flow and viscous dissipation through the stenotic orifice.
+                </p>
+
+                <SectionTitle>Thermodynamic Analysis Conclusion</SectionTitle>
+                <p>
+                    Thermodynamic analysis, grounded in the dynamic metabolism model, supports the hypothesis that aortic stenosis manifests predominantly as a pathology of <Highlight>systemic inefficiency</Highlight>, rather than energy converter (heart muscle) failure. Although the myocardium preserves its intrinsic conversion efficiency (<Code>η₁</Code>), global system efficiency (<Code>η₂</Code>) is severely compromised. Additional mechanical power generated by the ventricle is mostly dissipated as irreversibilities in the stenotic valve, rather than transferred to the circulating fluid. The growing gap between <Code>η₁</Code> and <Code>η₂</Code> thus emerges as a robust and physiologically coherent quantifier of aortic stenosis severity.
+                </p>
+            </>
+        );
+    }
+
     return (
         <>
             <p>
@@ -87,7 +133,7 @@ const SingleAnalysis: React.FC<{ params: SimulationParams, tableAVAs: [number, n
                 <li><strong>Estenose Severa:</strong> No estágio mais avançado, a demanda metabólica atinge <Highlight>{format(severeData.m_heart)} W</Highlight> para uma potência de <Highlight>{format(severeData.w_heart)} W</Highlight>, o que demonstra um consumo energético exacerbado em face de uma performance hemodinâmica comprometida.</li>
             </ul>
              <p className="mt-2">
-                 Paradoxalmente, o incremento no trabalho cardíaco não se traduz em uma melhoria da função de bombeamento. O fluxo sistólico efetivo (<Code>V_syst</Code>) decresce de <Highlight>{format(healthyData.v_syst)} mL/s</Highlight> em condições fisiológicas para <Highlight>{format(severeData.v_syst)} mL/s</Highlight> no cenário de estenose severa. Este achado ilustra o desacoplamento entre o custo energético e a eficácia hemodinâmica, onde um maior dispêndio metabólico resulta em um menor rendimento circulatório.
+                 Paradoxalmente, o incremento no trabalho cardíaco não se traduz em uma melhoria da função de bombeamento. O fluxo sistólico efetivo (<Code>V_syst</Code>) decresce de <Highlight>{format(healthyData.v_syst)} mL</Highlight> em condições fisiológicas para <Highlight>{format(severeData.v_syst)} mL</Highlight> no cenário de estenose severa. Este achado ilustra o desacoplamento entre o custo energético e a eficácia hemodinâmica, onde um maior dispêndio metabólico resulta em um menor rendimento circulatório.
             </p>
 
             <SectionTitle>Análise da Eficiência Exergética e Irreversibilidades</SectionTitle>
@@ -120,26 +166,48 @@ const StageComparison: React.FC<{
     controlData: any;
     testData: any;
 }> = ({ stageLabel, controlData, testData }) => {
-    const mHeartChange = getChange(controlData.m_heart, testData.m_heart);
-    const wHeartChange = getChange(controlData.w_heart, testData.w_heart);
-    const eta1Change = getChange(controlData.eta1, testData.eta1);
-    const eta2Change = getChange(controlData.eta2, testData.eta2);
+    const { language } = useLanguage();
+    const mHeartChange = getChange(controlData.m_heart, testData.m_heart, language);
+    const wHeartChange = getChange(controlData.w_heart, testData.w_heart, language);
+    const eta1Change = getChange(controlData.eta1, testData.eta1, language);
+    const eta2Change = getChange(controlData.eta2, testData.eta2, language);
+
+    const t = {
+        pt: {
+            scenario: "Cenário",
+            meta: "Metabolismo Cardíaco",
+            work: "Trabalho Cardíaco",
+            eta1: "Eficiência η₁ (Motor)",
+            eta2: "Eficiência η₂ (Sistema)",
+            from: "de",
+            to: "para"
+        },
+        en: {
+            scenario: "Scenario",
+            meta: "Heart Metabolism",
+            work: "Heart Work",
+            eta1: "Efficiency η₁ (Motor)",
+            eta2: "Efficiency η₂ (System)",
+            from: "from",
+            to: "to"
+        }
+    }[language];
 
     return (
         <div className="mt-4 p-3 border-l-4 border-gray-400 dark:border-gray-500 bg-gray-500/10 rounded-r-md">
-            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Cenário: {stageLabel} (AVA = {format(controlData.ava, 2)} cm²)</h4>
+            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">{t.scenario}: {stageLabel} (AVA = {format(controlData.ava, 2)} cm²)</h4>
             <ul className="text-sm list-disc list-inside space-y-1 mt-2">
                 <li>
-                    <strong>Metabolismo Cardíaco:</strong> <Highlight className={mHeartChange.color}>{mHeartChange.text}</Highlight> (de {format(controlData.m_heart)} para {format(testData.m_heart)} W).
+                    <strong>{t.meta}:</strong> <Highlight className={mHeartChange.color}>{mHeartChange.text}</Highlight> ({t.from} {format(controlData.m_heart)} {t.to} {format(testData.m_heart)} W).
                 </li>
                 <li>
-                    <strong>Trabalho Cardíaco:</strong> <Highlight className={wHeartChange.color}>{wHeartChange.text}</Highlight> (de {format(controlData.w_heart)} para {format(testData.w_heart)} W).
+                    <strong>{t.work}:</strong> <Highlight className={wHeartChange.color}>{wHeartChange.text}</Highlight> ({t.from} {format(controlData.w_heart)} {t.to} {format(testData.w_heart)} W).
                 </li>
                  <li>
-                    <strong>Eficiência η₁ (Motor):</strong> <Highlight className={eta1Change.color}>{eta1Change.text}</Highlight> (de {format(controlData.eta1)}% para {format(testData.eta1)}%).
+                    <strong>{t.eta1}:</strong> <Highlight className={eta1Change.color}>{eta1Change.text}</Highlight> ({t.from} {format(controlData.eta1)}% {t.to} {format(testData.eta1)}%).
                 </li>
                  <li>
-                    <strong>Eficiência η₂ (Sistema):</strong> <Highlight className={eta2Change.color}>{eta2Change.text}</Highlight> (de {format(controlData.eta2)}% para {format(testData.eta2)}%).
+                    <strong>{t.eta2}:</strong> <Highlight className={eta2Change.color}>{eta2Change.text}</Highlight> ({t.from} {format(controlData.eta2)}% {t.to} {format(testData.eta2)}%).
                 </li>
             </ul>
         </div>
@@ -153,41 +221,87 @@ const ComparativeAnalysis: React.FC<{
     tableAVAs: [number, number, number, number];
 }> = ({ params, tableAVAs }) => {
     const { control, test } = params;
+    const { language } = useLanguage();
     const changes = [];
+
+    const t = {
+        pt: {
+            hr: "Frequência Cardíaca",
+            temp: "Temperatura de Referência",
+            cd: "Coeficiente de Descarga (Cd)",
+            intro: "Esta análise comparativa avalia o impacto sistêmico decorrente da variação",
+            introSingle: "do seguinte parâmetro",
+            introMulti: "combinada dos seguintes parâmetros",
+            quantitative: "Análise Quantitativa do Impacto em Diferentes Estágios da Patologia",
+            quantitativeDesc: "A seguir, o impacto da variação de parâmetros é avaliado em cada um dos quatro estágios da estenose aórtica.",
+            interpretation: "Interpretação Fisiopatológica das Variações",
+            multiNote: "A variação simultânea de múltiplos parâmetros resulta em um efeito combinado e complexo no sistema cardiovascular. Cada parâmetro modificado introduz uma perturbação específica, e a resposta final do modelo reflete a interação entre esses fatores. A seguir, a interpretação individual de cada mudança:",
+            severe: "Estenose Severa",
+            moderate: "Estenose Moderada",
+            mild: "Estenose Leve",
+            healthy: "Fisiológico",
+            control: "Controle",
+            test: "Teste",
+            descHR: "A frequência cardíaca é um determinante primário do débito cardíaco (DC = FC x VS) e do consumo de oxigênio miocárdico (MVO₂). A variação deste parâmetro revela o balanço fisiológico entre a necessidade de manter o fluxo sanguíneo e o custo metabólico associado. Uma elevação da frequência pode aumentar o débito, mas também reduz o tempo de enchimento diastólico, o que pode comprometer o volume sistólico e a perfusão coronariana, resultando em alterações complexas nas eficiências exergéticas.",
+            descTemp: "A temperatura de referência (T₀), ou temperatura do ambiente termodinâmico, é um parâmetro fundamental na definição da exergia, pois estabelece o \"estado morto\" ou o nível de base a partir do qual o trabalho útil pode ser extraído. A modificação de T₀ re-escala o fator de Carnot (1 - T₀/T), influenciando diretamente o cálculo de todas as componentes exergéticas. A alteração resultante nas eficiências, portanto, não reflete uma mudança fisiológica per se, mas sim uma reavaliação do potencial termodinâmico do sistema em relação a um novo ambiente de referência.",
+            descCd: "O Coeficiente de Descarga (Cd) é um parâmetro adimensional que caracteriza as perdas de energia irreversíveis no escoamento através do orifício valvar, sendo uma medida da eficiência do orifício como um bocal. Um valor de Cd inferior a 1.0 indica a ocorrência do fenômeno da vena contracta e a dissipação de energia por turbulência. Consequentemente, a variação de Cd modula diretamente o gradiente de pressão transvalvar (ΔP), conforme previsto pela equação de Gorlin, com repercussões diretas sobre o trabalho cardíaco e a taxa de destruição de exergia."
+        },
+        en: {
+            hr: "Heart Rate",
+            temp: "Reference Temperature",
+            cd: "Discharge Coefficient (Cd)",
+            intro: "This comparative analysis evaluates the systemic impact resulting from the",
+            introSingle: "variation of the following parameter",
+            introMulti: "combined variation of the following parameters",
+            quantitative: "Quantitative Analysis of Impact across Pathology Stages",
+            quantitativeDesc: "Below, the impact of parameter variation is assessed at each of the four aortic stenosis stages.",
+            interpretation: "Pathophysiological Interpretation of Variations",
+            multiNote: "Simultaneous variation of multiple parameters results in a combined and complex effect on the cardiovascular system. Each modified parameter introduces a specific perturbation, and the final model response reflects the interaction between these factors. Below is the individual interpretation of each change:",
+            severe: "Severe Stenosis",
+            moderate: "Moderate Stenosis",
+            mild: "Mild Stenosis",
+            healthy: "Physiological",
+            control: "Control",
+            test: "Test",
+            descHR: "Heart rate is a primary determinant of cardiac output (CO = HR x SV) and myocardial oxygen consumption (MVO₂). Variation in this parameter reveals the physiological balance between the need to maintain blood flow and the associated metabolic cost. Elevated rate may increase output but also reduces diastolic filling time, potentially compromising stroke volume and coronary perfusion, resulting in complex changes in exergy efficiencies.",
+            descTemp: "Reference temperature (T₀), or thermodynamic environment temperature, is a fundamental parameter in exergy definition as it establishes the 'dead state' or base level from which useful work can be extracted. Modifying T₀ rescales the Carnot factor (1 - T₀/T), directly influencing the calculation of all exergetic components. The resulting change in efficiencies thus does not reflect a physiological change per se, but rather a reassessment of the system's thermodynamic potential relative to a new reference environment.",
+            descCd: "The Discharge Coefficient (Cd) is a dimensionless parameter characterizing irreversible energy losses in flow through the valve orifice, being a measure of the orifice efficiency as a nozzle. A Cd value less than 1.0 indicates the occurrence of the vena contracta phenomenon and energy dissipation by turbulence. Consequently, Cd variation directly modulates the transvalvular pressure gradient (ΔP), as predicted by the Gorlin equation, with direct repercussions on heart work and exergy destruction rate."
+        }
+    }[language];
 
     if (control.hr !== test.hr) {
         changes.push({
-            name: 'Frequência Cardíaca',
+            name: t.hr,
             unit: 'bpm',
             controlValue: control.hr,
             testValue: test.hr,
-            interpretation: <>A frequência cardíaca é um determinante primário do débito cardíaco (DC = FC x VS) e do consumo de oxigênio miocárdico (MVO₂). A variação deste parâmetro revela o balanço fisiológico entre a necessidade de manter o fluxo sanguíneo e o custo metabólico associado. Uma elevação da frequência pode aumentar o débito, mas também reduz o tempo de enchimento diastólico, o que pode comprometer o volume sistólico e a perfusão coronariana, resultando em alterações complexas nas eficiências exergéticas.</>
+            interpretation: t.descHR
         });
     }
     if (control.temperature !== test.temperature) {
         changes.push({
-            name: 'Temperatura de Referência',
+            name: t.temp,
             unit: '°C',
             controlValue: format(control.temperature, 1),
             testValue: format(test.temperature, 1),
-            interpretation: <>A temperatura de referência (<Code>T₀</Code>), ou temperatura do ambiente termodinâmico, é um parâmetro fundamental na definição da exergia, pois estabelece o "estado morto" ou o nível de base a partir do qual o trabalho útil pode ser extraído. A modificação de <Code>T₀</Code> re-escala o fator de Carnot (1 - T₀/T), influenciando diretamente o cálculo de todas as componentes exergéticas. A alteração resultante nas eficiências, portanto, não reflete uma mudança fisiológica per se, mas sim uma reavaliação do potencial termodinâmico do sistema em relação a um novo ambiente de referência.</>
+            interpretation: t.descTemp
         });
     }
     if (control.c_d !== test.c_d) {
         changes.push({
-            name: 'Coeficiente de Descarga (Cd)',
+            name: t.cd,
             unit: '',
             controlValue: format(control.c_d),
             testValue: format(test.c_d),
-            interpretation: <>O Coeficiente de Descarga (<Code>Cd</Code>) é um parâmetro adimensional que caracteriza as perdas de energia irreversíveis no escoamento através do orifício valvar, sendo uma medida da eficiência do orifício como um bocal. Um valor de <Code>Cd</Code> inferior a 1.0 indica a ocorrência do fenômeno da <i>vena contracta</i> e a dissipação de energia por turbulência. Consequentemente, a variação de <Code>Cd</Code> modula diretamente o gradiente de pressão transvalvar (<Code>ΔP</Code>), conforme previsto pela equação de Gorlin, com repercussões diretas sobre o trabalho cardíaco e a taxa de destruição de exergia.</>
+            interpretation: t.descCd
         });
     }
 
     if (changes.length === 0) {
-        return <p>Nenhum parâmetro foi alterado entre o cenário de controle e o de teste.</p>;
+        return <p>{language === 'pt' ? 'Nenhum parâmetro foi alterado entre o cenário de controle e o de teste.' : 'No parameters were changed between control and test scenarios.'}</p>;
     }
 
-    const stageLabels = ['Estenose Severa', 'Estenose Moderada', 'Estenose Leve', 'Fisiológico'];
+    const stageLabels = [t.severe, t.moderate, t.mild, t.healthy];
     
     // Calculate exact points
     const allControlPoints = tableAVAs.map(ava => calculateSinglePoint(ava, control));
@@ -205,18 +319,18 @@ const ComparativeAnalysis: React.FC<{
     return (
         <>
             <p>
-                Esta análise comparativa avalia o impacto sistêmico decorrente da variação {changes.length > 1 ? 'combinada dos seguintes parâmetros' : 'do seguinte parâmetro'}:
+                {t.intro} {changes.length > 1 ? t.introMulti : t.introSingle}:
             </p>
             <ul className="list-none my-2 p-4 bg-gray-100 dark:bg-gray-700/50 rounded-md">
                 {changes.map(change => (
                     <li key={change.name}>
-                        <Highlight>{change.name}</Highlight>, que variou de <Highlight>{change.controlValue} {change.unit}</Highlight> (Controle) para <Highlight>{change.testValue} {change.unit}</Highlight> (Teste).
+                        <Highlight>{change.name}</Highlight>, {language === 'pt' ? 'que variou de' : 'varying from'} <Highlight>{change.controlValue} {change.unit}</Highlight> ({t.control}) {language === 'pt' ? 'para' : 'to'} <Highlight>{change.testValue} {change.unit}</Highlight> ({t.test}).
                     </li>
                 ))}
             </ul>
 
-            <SectionTitle>Análise Quantitativa do Impacto em Diferentes Estágios da Patologia</SectionTitle>
-            <p>A seguir, o impacto da variação de parâmetros é avaliado em cada um dos quatro estágios da estenose aórtica.</p>
+            <SectionTitle>{t.quantitative}</SectionTitle>
+            <p>{t.quantitativeDesc}</p>
             
             {stageLabels.map((label, index) => (
                 <StageComparison
@@ -227,10 +341,10 @@ const ComparativeAnalysis: React.FC<{
                 />
             ))}
 
-            <SectionTitle>Interpretação Fisiopatológica das Variações</SectionTitle>
+            <SectionTitle>{t.interpretation}</SectionTitle>
              {changes.length > 1 && (
                 <p className="mb-4">
-                    A variação simultânea de múltiplos parâmetros resulta em um efeito combinado e complexo no sistema cardiovascular. Cada parâmetro modificado introduz uma perturbação específica, e a resposta final do modelo reflete a interação entre esses fatores. A seguir, a interpretação individual de cada mudança:
+                    {t.multiNote}
                 </p>
             )}
             <div className="space-y-3">
@@ -246,6 +360,20 @@ const ComparativeAnalysis: React.FC<{
 
 // Main Component
 const AnalysisContent: React.FC<AnalysisContentProps> = ({ results, isLoading, isComparative, params, tableAVAs }) => {
+    const { language } = useLanguage();
+    const t = {
+        pt: {
+            loading: "Carregando análise...",
+            noData: "Nenhum dado para analisar. Execute uma simulação para ver os resultados.",
+            title: "Análise Dinâmica dos Resultados da Simulação"
+        },
+        en: {
+            loading: "Loading analysis...",
+            noData: "No data to analyze. Run simulation to see results.",
+            title: "Dynamic Simulation Results Analysis"
+        }
+    }[language];
+
     if (isLoading) {
         return (
             <div className="flex justify-center items-center h-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
@@ -260,7 +388,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({ results, isLoading, i
     if (!results || !params) {
         return (
             <div className="flex justify-center items-center h-96 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-                <p>Nenhum dado para analisar. Execute uma simulação para ver os resultados.</p>
+                <p>{t.noData}</p>
             </div>
         );
     }
@@ -268,7 +396,7 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({ results, isLoading, i
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg text-base leading-relaxed">
             <h2 className="text-2xl font-bold text-center text-blue-600 dark:text-blue-400 mb-6">
-                Análise Dinâmica dos Resultados da Simulação
+                {t.title}
             </h2>
             {isComparative ? (
                 <ComparativeAnalysis params={params} tableAVAs={tableAVAs} />

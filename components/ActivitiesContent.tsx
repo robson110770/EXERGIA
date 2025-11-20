@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const ActivityCard: React.FC<{ 
     number: number; 
@@ -10,6 +11,26 @@ const ActivityCard: React.FC<{
     conclusion: string 
 }> = ({ number, title, objective, config, analysis, conclusion }) => {
     const [isConclusionVisible, setIsConclusionVisible] = useState(false);
+    const { language } = useLanguage();
+
+    const t = {
+        pt: {
+            objLabel: "Objetivo:",
+            configLabel: "Configuração do Painel",
+            analysisLabel: "O que Analisar",
+            hide: "Ocultar Conclusão",
+            show: "Ver Conclusão Esperada",
+            concLabel: "Conclusão Esperada"
+        },
+        en: {
+            objLabel: "Objective:",
+            configLabel: "Panel Configuration",
+            analysisLabel: "What to Analyze",
+            hide: "Hide Conclusion",
+            show: "See Expected Conclusion",
+            concLabel: "Expected Conclusion"
+        }
+    }[language];
 
     return (
         <div className="bg-gray-50 dark:bg-gray-700/30 p-6 rounded-lg border border-gray-200 dark:border-gray-600 mb-8 hover:shadow-md transition-shadow duration-300">
@@ -23,18 +44,18 @@ const ActivityCard: React.FC<{
             </div>
             
             <p className="mb-4 text-gray-700 dark:text-gray-300 text-sm italic">
-                <strong>Objetivo:</strong> {objective}
+                <strong>{t.objLabel}</strong> {objective}
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                 <div className="bg-white dark:bg-gray-800 p-4 rounded border border-blue-100 dark:border-blue-900/30">
-                    <h4 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2">Configuração do Painel</h4>
+                    <h4 className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase mb-2">{t.configLabel}</h4>
                     <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                         {config}
                     </div>
                 </div>
                 <div className="bg-white dark:bg-gray-800 p-4 rounded border border-orange-100 dark:border-orange-900/30">
-                    <h4 className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase mb-2">O que Analisar</h4>
+                    <h4 className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase mb-2">{t.analysisLabel}</h4>
                     <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                         {analysis}
                     </div>
@@ -52,7 +73,7 @@ const ActivityCard: React.FC<{
                                 <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
                                 <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.742L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.064 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
                             </svg>
-                            Ocultar Conclusão
+                            {t.hide}
                         </>
                     ) : (
                         <>
@@ -60,14 +81,14 @@ const ActivityCard: React.FC<{
                                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                                 <path fillRule="evenodd" d="M.458 10C1.274 4.057 5.064 3 10 3s8.726 1.057 9.542 7c-.816 5.943-4.606 7-9.542 7S1.274 15.943.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
                             </svg>
-                            Ver Conclusão Esperada
+                            {t.show}
                         </>
                     )}
                 </button>
 
                 {isConclusionVisible && (
                     <div className="mt-3 bg-blue-50 dark:bg-blue-900/10 p-4 rounded border-l-4 border-blue-500 animate-fade-in">
-                        <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200 mb-1">Conclusão Esperada</h4>
+                        <h4 className="text-sm font-bold text-gray-800 dark:text-gray-200 mb-1">{t.concLabel}</h4>
                         <p className="text-sm text-gray-700 dark:text-gray-300 text-justify">
                             {conclusion}
                         </p>
@@ -79,6 +100,123 @@ const ActivityCard: React.FC<{
 };
 
 const ActivitiesContent: React.FC = () => {
+    const { language } = useLanguage();
+
+    if (language === 'en') {
+        return (
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-base leading-relaxed animate-fade-in">
+                <h2 className="text-2xl font-extrabold text-center text-gray-900 dark:text-white mb-2">
+                    SUGGESTED ACTIVITIES
+                </h2>
+                <p className="text-center text-gray-600 dark:text-gray-400 mb-10 max-w-3xl mx-auto">
+                    Simulation proposals to explore hemodynamic and cardiac thermodynamic concepts using CardioExergy.
+                </p>
+    
+                <ActivityCard 
+                    number={1}
+                    title="The Compensation Paradox (Tachycardia)"
+                    objective="Demonstrate why increased heart rate (a common compensation mechanism) can be energetically disastrous in patients with stenosis."
+                    config={
+                        <ul className="list-disc list-inside">
+                            <li><strong>Control Tab:</strong> HR = 70 bpm (Rest).</li>
+                            <li><strong>Test Tab:</strong> HR = 100 bpm (Effort).</li>
+                            <li>Keep other parameters equal.</li>
+                        </ul>
+                    }
+                    analysis={
+                        <ul className="list-disc list-inside">
+                            <li>Focus on <strong>Severe Stenosis (AVA &lt; 1.0)</strong> region.</li>
+                            <li>See chart <strong>(b) Pressure Drop</strong>.</li>
+                            <li>See chart <strong>(d) Exergy Analysis</strong> (Destr. Ex.).</li>
+                        </ul>
+                    }
+                    conclusion="The test scenario (100 bpm) will show a disproportionate increase in pressure drop and exergy destruction in the valves. This illustrates the high energy cost of trying to pump blood quickly through a stenotic orifice, drastically increasing cardiac metabolism without proportional gain in effective flow."
+                />
+    
+                <ActivityCard 
+                    number={2}
+                    title="Importance of Valve Geometry (Cd)"
+                    objective="Show that geometric area (AVA) is not the only factor; valve 'shape' and aerodynamics matter."
+                    config={
+                        <ul className="list-disc list-inside">
+                            <li><strong>Control Tab:</strong> Cd = 0.85 (Typical Valve).</li>
+                            <li><strong>Test Tab:</strong> Cd = 0.60 (Calcified/Irregular Valve).</li>
+                            <li>Compare for the same AVA (e.g., 1.0 cm²).</li>
+                        </ul>
+                    }
+                    analysis={
+                        <ul className="list-disc list-inside">
+                            <li>Go to <strong>View Data</strong> tab.</li>
+                            <li>Compare <strong>Pressure Drop</strong> column.</li>
+                            <li>Compare <strong>Efficiency η₂</strong> column.</li>
+                        </ul>
+                    }
+                    conclusion="Even with the same opening area (AVA), the valve with lower Cd 'deceives' the flow, behaving as if it were much smaller (Reduced Effective Area). This generates much more pressure loss and drop in system efficiency (η₂), proving that orifice quality is as vital as its size."
+                />
+    
+                <ActivityCard 
+                    number={3}
+                    title="The 'Cost' of Cold: Pure Thermodynamics"
+                    objective="Analyze model sensitivity to Reference Temperature (T₀), isolating the thermal component of Exergy."
+                    config={
+                        <ul className="list-disc list-inside">
+                            <li><strong>Control Tab:</strong> T₀ = 37.0°C (Body Environment).</li>
+                            <li><strong>Test Tab:</strong> T₀ = 20.0°C (Hypothermia/Operating Room).</li>
+                            <li>Note: Heart temperature is fixed at 38.8°C.</li>
+                        </ul>
+                    }
+                    analysis={
+                        <ul className="list-disc list-inside">
+                            <li>Focus on <strong>Efficiency η₁ and η₂</strong> charts.</li>
+                            <li>Observe subtle changes in absolute values.</li>
+                        </ul>
+                    }
+                    conclusion="By drastically lowering T₀, the theoretical work potential (Carnot Factor: 1 - T₀/T) increases. The model will show a change in efficiencies, serving as a theoretical lesson on how defining the 'dead state' alters the perception of thermodynamic efficiency, even if mechanics (pressure/flow) remain unchanged."
+                />
+    
+                <ActivityCard 
+                    number={4}
+                    title="Therapeutic Bradycardia?"
+                    objective="Investigate if reducing heart rate improves thermodynamic efficiency in severe cases."
+                    config={
+                        <ul className="list-disc list-inside">
+                            <li><strong>Control Tab:</strong> HR = 75 bpm.</li>
+                            <li><strong>Test Tab:</strong> HR = 55 bpm (Bradycardia/Athlete).</li>
+                            <li>Observe the Metabolism curve.</li>
+                        </ul>
+                    }
+                    analysis={
+                        <ul className="list-disc list-inside">
+                            <li>Chart <strong>(c) Metabolism and Work</strong>.</li>
+                            <li>Compare Metabolism (M_Heart) in severe stenosis.</li>
+                        </ul>
+                    }
+                    conclusion="By reducing frequency, the number of cycles per minute drops, reducing total accumulated turbulence over time. This leads to Metabolism (M_Heart) savings, helping explain from an energetic standpoint why HR-reducing drugs (like beta-blockers) can be used to 'spare' the heart."
+                />
+    
+                <ActivityCard 
+                    number={5}
+                    title="The Efficiency Collapse Point"
+                    objective="Visually identify the tipping point where the disease becomes uncompensable."
+                    config={
+                        <ul className="list-disc list-inside">
+                            <li>Use <strong>Control</strong> mode only.</li>
+                            <li>Set Min AVA: 0.5 and Max: 3.5.</li>
+                        </ul>
+                    }
+                    analysis={
+                        <ul className="list-disc list-inside">
+                            <li>Observe exclusively <strong>Chart (f) Efficiency η₂</strong>.</li>
+                            <li>Try to find the AVA value where the curve starts falling 'vertically'.</li>
+                        </ul>
+                    }
+                    conclusion="Generally, at AVA > 2.0, the curve is almost flat (high efficiency). Between 1.5 and 1.0, it starts to slope. Below 1.0 (Severe), it plummets. This graph thermodynamically justifies surgical intervention: below a certain point, system efficiency is nearly zero and all engine energy is being destroyed."
+                />
+            </div>
+        );
+    }
+
+    // Default Portuguese
     return (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-base leading-relaxed animate-fade-in">
             <h2 className="text-2xl font-extrabold text-center text-gray-900 dark:text-white mb-2">

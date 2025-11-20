@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 // Helper Components for consistent styling within HelpContent
 const MainHeader: React.FC<{ children: React.ReactNode }> = ({ children }) => (
@@ -19,6 +20,85 @@ const Highlight: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 );
 
 const HelpContent: React.FC = () => {
+    const { language } = useLanguage();
+
+    if (language === 'en') {
+        return (
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-base leading-relaxed animate-fade-in">
+                <h2 className="text-xl font-extrabold text-center text-gray-900 dark:text-white mb-8">
+                    HELP AND TECHNICAL DOCUMENTATION
+                </h2>
+    
+                <MainHeader>1. APP FUNCTIONALITY</MainHeader>
+                <p>
+                    <strong>CardioExergy</strong> is an interactive scientific tool designed to assist students, researchers, and healthcare professionals in understanding cardiac bioenergetics under pathological conditions.
+                </p>
+                
+                <SectionTitle>Objective</SectionTitle>
+                <p>
+                    The main objective is to simulate the impact of <strong>Aortic Stenosis</strong> on the heart's energy efficiency. Unlike traditional approaches focusing only on pressure and flow (hemodynamics), this app uses <Highlight>Exergy Analysis</Highlight> (thermodynamics) to quantify the waste of useful energy (irreversibility) caused by the diseased valve.
+                </p>
+    
+                <SectionTitle>Key Features</SectionTitle>
+                <ul className="list-disc list-inside space-y-3 mt-2 pl-4">
+                    <li>
+                        <Highlight>Control Panel:</Highlight> Located on the left, allows real-time manipulation of critical physiological variables such as Heart Rate, Body Temperature, and Valve Discharge Coefficient.
+                    </li>
+                    <li>
+                        <Highlight>Comparative Mode:</Highlight> Users can configure two simultaneous scenarios (Control vs. Test) to view side-by-side how parameter changes affect results. Ideal for understanding system sensitivity.
+                    </li>
+                    <li>
+                        <Highlight>Graphic Visualization:</Highlight> The "View Charts" tab plots the behavior of key variables (Flow, Pressure Drop, Work/Metabolism, Exergy Destruction, and Efficiencies η₁ and η₂) against disease progression (Valve Area reduction - AVA).
+                    </li>
+                    <li>
+                        <Highlight>Data Table:</Highlight> The "View Data" tab offers a precise tabular view of numerical values for four clinical reference points: Severe, Moderate, Mild Stenosis, and Healthy Condition.
+                    </li>
+                    <li>
+                        <Highlight>Automated Reports:</Highlight> The "Results Analysis" tab generates dynamic textual interpretation based on simulated data, explaining observed physical phenomena.
+                    </li>
+                    <li>
+                        <Highlight>Suggested Activities:</Highlight> The "Activities" tab offers guided simulation scripts. These educational exercises propose specific scenarios (like the impact of tachycardia or valve geometry) to explore theoretical concepts in practice, including setup instructions, analysis points, and hidden conclusions to encourage active reasoning.
+                    </li>
+                </ul>
+    
+                <MainHeader>2. TECHNICAL DOCUMENTATION</MainHeader>
+                <p>
+                    This app was built following modern software development standards, prioritizing scientific accuracy, performance, and accessibility.
+                </p>
+    
+                <SectionTitle>Tech Stack</SectionTitle>
+                <ul className="list-disc list-inside space-y-2 mt-2 pl-4">
+                    <li>
+                        <Highlight>Language:</Highlight> <strong>TypeScript</strong>. An evolution of JavaScript adding static typing. This ensures complex simulation math is executed safely and robustly, preventing common type errors.
+                    </li>
+                    <li>
+                        <Highlight>Framework:</Highlight> <strong>React.js</strong>. Used to build the user interface. React's component-based architecture makes the application highly reactive: every numeric adjustment in the control panel instantly triggers a recalculation and chart update without page reloads.
+                    </li>
+                    <li>
+                        <Highlight>Styling:</Highlight> <strong>Tailwind CSS</strong>. A utility framework providing a clean, responsive design (adaptable to mobile and tablets) with native dark mode support.
+                    </li>
+                    <li>
+                        <Highlight>Data Visualization:</Highlight> <strong>Recharts</strong>. A robust D3.js-based library used to render high-fidelity interactive SVG charts.
+                    </li>
+                </ul>
+    
+                <SectionTitle>Architecture and Mathematical Model</SectionTitle>
+                <p>
+                    The application operates under a <strong>Client-Side Single Page Application (SPA)</strong> architecture.
+                </p>
+                <ul className="list-disc list-inside space-y-2 mt-2 pl-4">
+                    <li>
+                        <strong>Local Execution:</strong> All simulation calculations occur directly in the user's browser. No data is sent to external servers, ensuring total data privacy and allowing the app to function perfectly <strong>offline</strong>.
+                    </li>
+                    <li>
+                        <strong>Simulation Engine:</strong> Scientific logic resides in the <code>simulationService.ts</code> module. This module translates the differential and algebraic equations from Roll et al. (2019) — including Gorlin's Formula and entropy balances — into optimized computational algorithms.
+                    </li>
+                </ul>
+            </div>
+        );
+    }
+
+    // Portuguese Default
     return (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-base leading-relaxed animate-fade-in">
             <h2 className="text-xl font-extrabold text-center text-gray-900 dark:text-white mb-8">

@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { SimulationParams } from '../types';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface ControlPanelProps {
     params: { control: SimulationParams; test: SimulationParams };
@@ -33,7 +34,55 @@ const InputField: React.FC<{ label: string; id: keyof SimulationParams; value: n
 
 
 const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVAs, setTableAVAs, onRunSimulation, onReset, isLoading }) => {
+    const { language } = useLanguage();
     const [activeTab, setActiveTab] = useState<'control' | 'test'>('control');
+
+    const t = {
+        pt: {
+            title: "PAINEL DE CONTROLE",
+            sectionSim: "VALORES DE AVA PARA SIMULAÇÃO",
+            sectionPhysio: "PARÂMETROS FISIOLÓGICOS",
+            sectionAnalysis: "VALORES DE AVA PARA ANÁLISE",
+            minAVA: "AVA Mínima",
+            maxAVA: "AVA Máxima",
+            control: "Controle (Padrão)",
+            test: "Teste (Comparativo)",
+            hr: "Frequência Cardíaca",
+            tempRef: "Temp. Referência (T₀)",
+            cd: "Coef. de Descarga (Cd)",
+            unitless: "adimensional",
+            note: "* Alterações no modo \"Controle\" são replicadas no modo \"Teste\" para facilitar a comparação inicial.",
+            simulate: "EXECUTAR SIMULAÇÃO",
+            simulating: "SIMULANDO...",
+            reset: "RESTAURAR PADRÕES",
+            severe: "Severa",
+            moderate: "Moderada",
+            mild: "Leve",
+            healthy: "Saudável"
+        },
+        en: {
+            title: "CONTROL PANEL",
+            sectionSim: "AVA VALUES FOR SIMULATION",
+            sectionPhysio: "PHYSIOLOGICAL PARAMETERS",
+            sectionAnalysis: "AVA VALUES FOR ANALYSIS",
+            minAVA: "Min AVA",
+            maxAVA: "Max AVA",
+            control: "Control (Default)",
+            test: "Test (Comparative)",
+            hr: "Heart Rate",
+            tempRef: "Ref. Temp. (T₀)",
+            cd: "Discharge Coeff. (Cd)",
+            unitless: "dimensionless",
+            note: "* Changes in \"Control\" mode are replicated to \"Test\" mode to facilitate initial comparison.",
+            simulate: "RUN SIMULATION",
+            simulating: "SIMULATING...",
+            reset: "RESET TO DEFAULTS",
+            severe: "Severe",
+            moderate: "Moderate",
+            mild: "Mild",
+            healthy: "Healthy"
+        }
+    }[language];
 
     const handleTabParamChange = (id: keyof SimulationParams, value: number) => {
         setParams(prev => {
@@ -94,7 +143,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
     return (
         <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg h-full flex flex-col">
             <h2 className="text-xl font-bold mb-4 text-center text-blue-700 dark:text-blue-400 uppercase tracking-wide">
-                PAINEL DE CONTROLE
+                {t.title}
             </h2>
             <hr className="border-gray-200 dark:border-gray-700 mb-6" />
             
@@ -102,12 +151,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                 {/* Seção 1: Parâmetros Globais (Afetam ambos) */}
                 <div>
                      <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">
-                        VALORES DE AVA PARA SIMULAÇÃO
+                        {t.sectionSim}
                     </h3>
                     <div className="space-y-4 p-4 rounded-md border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50 dark:bg-indigo-900/10">
                         <div className="grid grid-cols-2 gap-4">
-                            <InputField label="AVA Mínima" id="minAVA" value={params.control.minAVA} unit="cm²" min={0.1} max={5} step={0.1} onChange={handleCommonParamChange} />
-                            <InputField label="AVA Máxima" id="maxAVA" value={params.control.maxAVA} unit="cm²" min={0.5} max={6} step={0.1} onChange={handleCommonParamChange} />
+                            <InputField label={t.minAVA} id="minAVA" value={params.control.minAVA} unit="cm²" min={0.1} max={5} step={0.1} onChange={handleCommonParamChange} />
+                            <InputField label={t.maxAVA} id="maxAVA" value={params.control.maxAVA} unit="cm²" min={0.5} max={6} step={0.1} onChange={handleCommonParamChange} />
                         </div>
                     </div>
                 </div>
@@ -117,7 +166,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                 {/* Seção 2: Parâmetros Comparativos */}
                 <div>
                     <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">
-                        PARÂMETROS FISIOLÓGICOS
+                        {t.sectionPhysio}
                     </h3>
                     
                     {/* Abas para Controle vs Teste */}
@@ -126,19 +175,19 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                             className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${activeTab === 'control' ? 'bg-white dark:bg-gray-600 text-blue-600 dark:text-blue-300 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
                             onClick={() => setActiveTab('control')}
                         >
-                            Controle (Padrão)
+                            {t.control}
                         </button>
                         <button
                             className={`flex-1 py-1.5 text-sm font-medium rounded-md transition-colors ${activeTab === 'test' ? 'bg-white dark:bg-gray-600 text-orange-600 dark:text-orange-300 shadow-sm' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'}`}
                             onClick={() => setActiveTab('test')}
                         >
-                            Teste (Comparativo)
+                            {t.test}
                         </button>
                     </div>
 
                     <div className={`space-y-4 p-3 rounded-md border ${activeTab === 'control' ? 'border-blue-100 dark:border-blue-900/30 bg-blue-50/50 dark:bg-blue-900/10' : 'border-orange-100 dark:border-orange-900/30 bg-orange-50/50 dark:bg-orange-900/10'}`}>
                          <InputField 
-                            label="Frequência Cardíaca" 
+                            label={t.hr} 
                             id="hr" 
                             value={activeTab === 'control' ? params.control.hr : params.test.hr} 
                             unit="bpm" 
@@ -148,7 +197,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                             onChange={handleTabParamChange} 
                         />
                         <InputField 
-                            label="Temp. Referência (T₀)" 
+                            label={t.tempRef} 
                             id="temperature" 
                             value={activeTab === 'control' ? params.control.temperature : params.test.temperature} 
                             unit="°C" 
@@ -158,10 +207,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                             onChange={handleTabParamChange} 
                         />
                          <InputField 
-                            label="Coef. de Descarga (Cd)" 
+                            label={t.cd} 
                             id="c_d" 
                             value={activeTab === 'control' ? params.control.c_d : params.test.c_d} 
-                            unit="adimensional" 
+                            unit={t.unitless}
                             min={0.5} 
                             max={1.0} 
                             step={0.01} 
@@ -169,7 +218,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                         />
                     </div>
                      <p className="text-xs text-gray-500 mt-2 italic">
-                        * Alterações no modo "Controle" são replicadas no modo "Teste" para facilitar a comparação inicial.
+                        {t.note}
                     </p>
                 </div>
 
@@ -182,7 +231,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                         disabled={isLoading}
                         className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white uppercase tracking-wide ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'} transition-colors`}
                     >
-                        {isLoading ? 'SIMULANDO...' : 'EXECUTAR SIMULAÇÃO'}
+                        {isLoading ? t.simulating : t.simulate}
                     </button>
 
                     <button
@@ -190,7 +239,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                         disabled={isLoading}
                         className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors uppercase tracking-wide"
                     >
-                        RESTAURAR PADRÕES
+                        {t.reset}
                     </button>
                  </div>
 
@@ -199,25 +248,25 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
                  {/* Seção 3: Pontos de Interesse na Tabela */}
                  <div>
                     <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 text-center">
-                        VALORES DE AVA PARA ANÁLISE
+                        {t.sectionAnalysis}
                     </h3>
                     
                     <div className="p-4 mb-2 rounded-md border border-indigo-100 dark:border-indigo-900/30 bg-indigo-50 dark:bg-indigo-900/10">
                         <div className="grid grid-cols-2 gap-2 text-sm">
                              <div>
-                                <label className="block text-xs text-gray-500">Severa</label>
+                                <label className="block text-xs text-gray-500">{t.severe}</label>
                                 <input type="number" value={tableAVAs[0]} step={0.1} onChange={(e) => handleTableAVAChange(0, parseFloat(e.target.value))} className="w-full border rounded px-2 py-1 text-xs" />
                              </div>
                              <div>
-                                <label className="block text-xs text-gray-500">Moderada</label>
+                                <label className="block text-xs text-gray-500">{t.moderate}</label>
                                 <input type="number" value={tableAVAs[1]} step={0.1} onChange={(e) => handleTableAVAChange(1, parseFloat(e.target.value))} className="w-full border rounded px-2 py-1 text-xs" />
                              </div>
                              <div>
-                                <label className="block text-xs text-gray-500">Leve</label>
+                                <label className="block text-xs text-gray-500">{t.mild}</label>
                                 <input type="number" value={tableAVAs[2]} step={0.1} onChange={(e) => handleTableAVAChange(2, parseFloat(e.target.value))} className="w-full border rounded px-2 py-1 text-xs" />
                              </div>
                              <div>
-                                <label className="block text-xs text-gray-500">Saudável</label>
+                                <label className="block text-xs text-gray-500">{t.healthy}</label>
                                 <input type="number" value={tableAVAs[3]} step={0.1} onChange={(e) => handleTableAVAChange(3, parseFloat(e.target.value))} className="w-full border rounded px-2 py-1 text-xs" />
                              </div>
                         </div>
