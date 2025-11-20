@@ -8,6 +8,7 @@ interface ControlPanelProps {
     tableAVAs: [number, number, number, number];
     setTableAVAs: React.Dispatch<React.SetStateAction<[number, number, number, number]>>;
     onRunSimulation: () => void;
+    onReset: () => void;
     isLoading: boolean;
 }
 
@@ -31,7 +32,7 @@ const InputField: React.FC<{ label: string; id: keyof SimulationParams; value: n
 );
 
 
-const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVAs, setTableAVAs, onRunSimulation, isLoading }) => {
+const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVAs, setTableAVAs, onRunSimulation, onReset, isLoading }) => {
     const [activeTab, setActiveTab] = useState<'control' | 'test'>('control');
 
     const handleTabParamChange = (id: keyof SimulationParams, value: number) => {
@@ -174,14 +175,22 @@ const ControlPanel: React.FC<ControlPanelProps> = ({ params, setParams, tableAVA
 
                  <hr className="border-gray-200 dark:border-gray-700" />
 
-                 {/* Botão Executar (Moved here) */}
-                 <div className="py-1">
+                 {/* Botões de Ação */}
+                 <div className="py-1 space-y-3">
                     <button
                         onClick={onRunSimulation}
                         disabled={isLoading}
                         className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-bold text-white uppercase tracking-wide ${isLoading ? 'bg-blue-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'} transition-colors`}
                     >
                         {isLoading ? 'SIMULANDO...' : 'EXECUTAR SIMULAÇÃO'}
+                    </button>
+
+                    <button
+                        onClick={onReset}
+                        disabled={isLoading}
+                        className="w-full flex justify-center py-2 px-4 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors uppercase tracking-wide"
+                    >
+                        RESTAURAR PADRÕES
                     </button>
                  </div>
 

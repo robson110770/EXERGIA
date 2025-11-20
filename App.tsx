@@ -10,28 +10,24 @@ import HelpContent from './components/HelpContent';
 import TeamContent from './components/TeamContent';
 import ActivitiesContent from './components/ActivitiesContent';
 
+// Define defaults based on Roll et al. (2019)
+const DEFAULT_PARAMS: SimulationParams = {
+    minAVA: 0.5,
+    maxAVA: 3.5,
+    steps: 100,
+    hr: 72,
+    temperature: 37.0,
+    c_d: 0.85,
+};
+
 const App: React.FC = () => {
     // Removed isLandingPage state
     const [params, setParams] = useState<{
         control: SimulationParams;
         test: SimulationParams;
     }>({
-        control: {
-            minAVA: 0.5,
-            maxAVA: 3.5,
-            steps: 100,
-            hr: 72,
-            temperature: 37.0, // Temperatura de referência padrão ajustada para 37.0°C
-            c_d: 0.85,
-        },
-        test: {
-            minAVA: 0.5,
-            maxAVA: 3.5,
-            steps: 100,
-            hr: 72, 
-            temperature: 37.0, // Temperatura de referência padrão ajustada para 37.0°C
-            c_d: 0.85,
-        },
+        control: { ...DEFAULT_PARAMS },
+        test: { ...DEFAULT_PARAMS },
     });
     const [results, setResults] = useState<{
         control: SimulationResults;
@@ -61,6 +57,16 @@ const App: React.FC = () => {
             setIsLoading(false);
         }, 500);
     }, [params, isComparative]);
+
+    // Reset handler
+    const resetParams = () => {
+        setParams({
+            control: { ...DEFAULT_PARAMS },
+            test: { ...DEFAULT_PARAMS },
+        });
+        // Opcional: executar a simulação automaticamente após o reset
+        // runSimulation(); 
+    };
 
     useEffect(() => {
         runSimulation();
@@ -389,6 +395,7 @@ Calculado usando a **Fórmula de Gorlin** (Seção 2.1).
                             tableAVAs={tableAVAs}
                             setTableAVAs={setTableAVAs}
                             onRunSimulation={runSimulation}
+                            onReset={resetParams}
                             isLoading={isLoading}
                         />
                     </div>
