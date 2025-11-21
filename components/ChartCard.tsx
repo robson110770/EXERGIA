@@ -3,10 +3,11 @@ import React, { useRef } from 'react';
 
 interface ChartCardProps {
     title: string;
+    caption?: string;
     children: React.ReactNode;
 }
 
-const ChartCard: React.FC<ChartCardProps> = ({ title, children }) => {
+const ChartCard: React.FC<ChartCardProps> = ({ title, caption, children }) => {
     const chartContainerRef = useRef<HTMLDivElement>(null);
 
     const handleExport = async () => {
@@ -70,7 +71,7 @@ const ChartCard: React.FC<ChartCardProps> = ({ title, children }) => {
 
 
     return (
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg relative">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-lg relative flex flex-col h-full">
             <button
                 onClick={handleExport}
                 className="absolute top-2 right-2 p-1.5 bg-gray-200 dark:bg-gray-700 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 focus:ring-offset-white dark:focus:ring-offset-gray-800 transition-colors z-10"
@@ -84,9 +85,16 @@ const ChartCard: React.FC<ChartCardProps> = ({ title, children }) => {
             <h3 className="text-md font-semibold mb-4 text-center text-gray-700 dark:text-gray-300">
                 {title}
             </h3>
-            <div ref={chartContainerRef}>
+            <div ref={chartContainerRef} className="flex-grow">
                 {children}
             </div>
+            {caption && (
+                <div className="mt-3 pt-3 border-t border-gray-100 dark:border-gray-700">
+                    <p className="text-xs text-gray-500 dark:text-gray-400 text-center italic leading-relaxed px-2">
+                        {caption}
+                    </p>
+                </div>
+            )}
         </div>
     );
 };

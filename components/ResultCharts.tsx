@@ -33,7 +33,15 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
             titleF: "(f) Eficiência Exergética η₂",
             eff: "Eficiência (%)",
             power: "Potência (W)",
-            exergy: "Exergia (W)"
+            exergy: "Exergia (W)",
+            captions: {
+                a: "Representa a vazão de sangue ejetado pelo ventrículo. A redução observada à esquerda indica o comprometimento hemodinâmico na estenose severa.",
+                b: "Mostra a diferença de pressão necessária para forçar o sangue através da válvula. Note o aumento exponencial conforme a área (AVA) diminui.",
+                c: "Compara o custo energético total (Metabolismo) com a potência útil (Trabalho). O distanciamento entre as curvas ilustra o esforço desperdiçado.",
+                d: "Contrasta a exergia efetivamente transferida ao sangue com a exergia destruída (perda irreversível) devido à turbulência na válvula.",
+                e: "Eficiência de conversão do músculo cardíaco (Motor). Tende a permanecer estável, indicando que a falha não é muscular, mas sistêmica.",
+                f: "Eficiência global do sistema (Hemodinâmica). A queda abrupta em AVAs baixas demonstra o colapso da capacidade de bombeamento eficiente."
+            }
         },
         en: {
             loading: "Loading...",
@@ -53,7 +61,15 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
             titleF: "(f) Exergy Efficiency η₂",
             eff: "Efficiency (%)",
             power: "Power (W)",
-            exergy: "Exergy (W)"
+            exergy: "Exergy (W)",
+            captions: {
+                a: "Represents the rate of blood ejected by the ventricle. The reduction observed on the left indicates hemodynamic impairment in severe stenosis.",
+                b: "Shows the pressure difference needed to force blood through the valve. Note the exponential increase as the area (AVA) decreases.",
+                c: "Compares total energy cost (Metabolism) with useful power (Work). The widening gap between curves illustrates wasted effort.",
+                d: "Contrasts exergy effectively transferred to the blood with exergy destroyed (irreversible loss) due to turbulence at the valve.",
+                e: "Conversion efficiency of the heart muscle (Engine). Tends to remain stable, indicating the failure is systemic, not muscular.",
+                f: "Global system efficiency (Hemodynamic). The sharp drop at low AVAs demonstrates the collapse of efficient pumping capacity."
+            }
         }
     }[language];
 
@@ -146,7 +162,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <ChartCard title={t.titleA}>
+            <ChartCard title={t.titleA} caption={t.captions.a}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -161,7 +177,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title={t.titleB}>
+            <ChartCard title={t.titleB} caption={t.captions.b}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -176,7 +192,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title={t.titleC}>
+            <ChartCard title={t.titleC} caption={t.captions.c}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -193,7 +209,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                 </ResponsiveContainer>
             </ChartCard>
             
-            <ChartCard title={t.titleD}>
+            <ChartCard title={t.titleD} caption={t.captions.d}>
                  <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -212,7 +228,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title={t.titleE}>
+            <ChartCard title={t.titleE} caption={t.captions.e}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />
@@ -227,7 +243,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                 </ResponsiveContainer>
             </ChartCard>
 
-            <ChartCard title={t.titleF}>
+            <ChartCard title={t.titleF} caption={t.captions.f}>
                 <ResponsiveContainer width="100%" height={300}>
                     <LineChart data={chartData}>
                         <CartesianGrid strokeDasharray="3 3" strokeOpacity={0.2} />

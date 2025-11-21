@@ -2,19 +2,30 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
-const ResearcherCard: React.FC<{ name: string; title: string; bio?: React.ReactNode }> = ({ name, title, bio }) => (
-    <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow duration-300">
-        <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-1">
-            {name}
-        </h3>
-        <h4 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-4 italic">
-            {title}
-        </h4>
-        {bio && (
-            <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3 leading-relaxed text-justify">
-                {bio}
+const ResearcherCard: React.FC<{ name: string; title: string; bio?: React.ReactNode; imageUrl?: string }> = ({ name, title, bio, imageUrl }) => (
+    <div className="bg-gray-50 dark:bg-gray-700/50 p-6 rounded-lg border border-gray-200 dark:border-gray-600 hover:shadow-md transition-shadow duration-300 flex flex-col md:flex-row gap-6 items-center md:items-start">
+        {imageUrl && (
+            <div className="flex-shrink-0">
+                <img 
+                    src={imageUrl} 
+                    alt={name} 
+                    className="w-32 h-32 md:w-40 md:h-40 object-cover rounded-full border-4 border-white dark:border-gray-600 shadow-sm"
+                />
             </div>
         )}
+        <div className="flex-grow text-center md:text-left">
+            <h3 className="text-xl font-bold text-blue-700 dark:text-blue-300 mb-1">
+                {name}
+            </h3>
+            <h4 className="text-md font-semibold text-gray-700 dark:text-gray-300 mb-4 italic">
+                {title}
+            </h4>
+            {bio && (
+                <div className="text-sm text-gray-600 dark:text-gray-400 space-y-3 leading-relaxed text-justify">
+                    {bio}
+                </div>
+            )}
+        </div>
     </div>
 );
 
@@ -28,6 +39,9 @@ const TeamContent: React.FC = () => {
             titles: {
                 me: "Engenheira Mecânica e Mestranda em Engenharia Biomédica",
                 dr: "Doutor em Engenharia Biomédica"
+            },
+            maria: {
+                p1: "Graduada em Engenharia Mecânica pela Universidade de Mogi das Cruzes (2024) e Ensino Médio pelo Colégio São Marcos (2019). Tem experiência na área de Engenharia Mecânica e participou de projetos de Iniciação Científica."
             },
             fabiano: {
                 p1: "Coordenador do Programa de Pós-Graduação Integrado em Engenharia Biomédica e do Núcleo de Pesquisa Tecnológica (NPT) da Universidade de Mogi das Cruzes (UMC).",
@@ -49,6 +63,9 @@ const TeamContent: React.FC = () => {
                 me: "Mechanical Engineer and Master's Student in Biomedical Engineering",
                 dr: "PhD in Biomedical Engineering"
             },
+            maria: {
+                p1: "Graduated in Mechanical Engineering from the University of Mogi das Cruzes (2024) and High School from Colégio São Marcos (2019). Has experience in Mechanical Engineering and participated in Scientific Initiation projects."
+            },
             fabiano: {
                 p1: "Coordinator of the Integrated Graduate Program in Biomedical Engineering and the Technological Research Center (NPT) at the University of Mogi das Cruzes (UMC).",
                 p2: "Coordinator of the Bioinformatics and Omics Sciences Laboratory (LaBiOmicS) linked to the Integrated Biotechnology Center (NIB) and the Technological Research Center (NPT), both at UMC. Professor in the strictu sensu graduate programs in Biomedical Engineering and Biotechnology at the University of Mogi das Cruzes (UMC).",
@@ -66,9 +83,26 @@ const TeamContent: React.FC = () => {
 
     return (
         <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg text-base leading-relaxed animate-fade-in">
-            <h2 className="text-2xl font-extrabold text-center text-gray-900 dark:text-white mb-2">
-                {t.title}
-            </h2>
+            
+            {/* Header com Logos e Título */}
+            <div className="flex flex-col md:flex-row items-center justify-between mb-8 gap-6">
+                <img 
+                    src="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.33.24.jpeg" 
+                    alt="Logo UMC" 
+                    className="h-20 md:h-24 object-contain"
+                />
+                
+                <h2 className="text-2xl md:text-3xl font-extrabold text-center text-gray-900 dark:text-white flex-grow px-4">
+                    {t.title}
+                </h2>
+
+                <img 
+                    src="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.34.57.jpeg" 
+                    alt="Logo Lab" 
+                    className="h-20 md:h-24 object-contain"
+                />
+            </div>
+
             <p className="text-center text-gray-600 dark:text-gray-400 mb-10 max-w-3xl mx-auto">
                 {t.desc}
             </p>
@@ -79,13 +113,17 @@ const TeamContent: React.FC = () => {
                 <ResearcherCard 
                     name="1. Maria Luiza Zitei Brandão" 
                     title={t.titles.me}
-                    bio={null}
+                    imageUrl="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.30.57.jpeg"
+                    bio={
+                        <p>{t.maria.p1}</p>
+                    }
                 />
 
                 {/* Fabiano Menegidio */}
                 <ResearcherCard 
                     name="2. Prof. Dr. Fabiano Bezerra Menegidio" 
                     title={t.titles.dr}
+                    imageUrl="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.29.25.jpeg"
                     bio={
                         <>
                             <p><strong className="text-gray-800 dark:text-gray-200">EasyOmics / Brycon CTO.</strong></p>
@@ -101,6 +139,7 @@ const TeamContent: React.FC = () => {
                 <ResearcherCard 
                     name="3. Prof. Dr. Robson Rodrigues da Silva" 
                     title={t.titles.dr}
+                    imageUrl="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.25.37.jpeg"
                     bio={
                         <>
                             <p>{t.robson.p1}</p>
