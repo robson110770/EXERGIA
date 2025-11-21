@@ -105,10 +105,8 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
         ];
         
         const conditionLabels = [t.severe, t.moderate, t.mild, t.healthy];
-        const conditionTitles = tableAVAs.map((ava, index) => `${conditionLabels[index]} (AVA = ${ava.toFixed(2)} cm²)`);
 
-
-        return { points, metrics, conditionTitles };
+        return { points, metrics, conditionLabels };
 
     }, [tableAVAs, params, t]);
 
@@ -131,7 +129,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
         );
     }
 
-    const { points, metrics, conditionTitles } = summaryData;
+    const { points, metrics, conditionLabels } = summaryData;
     
     return (
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg overflow-x-auto">
@@ -140,18 +138,23 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-300">
                     <tr>
                         <th scope="col" rowSpan={isComparative ? 2 : 1} className="px-6 py-3 align-middle border-b border-gray-200 dark:border-gray-600">{t.param}</th>
-                        {conditionTitles.map(title => (
-                            <th key={title} scope="col" colSpan={isComparative ? 2 : 1} className="px-6 py-3 text-center border-b border-l border-gray-200 dark:border-gray-600">
-                                {title}
+                        {conditionLabels.map((label, index) => (
+                            <th key={label} scope="col" colSpan={isComparative ? 2 : 1} className="px-2 py-3 text-center border-b border-l border-gray-200 dark:border-gray-600">
+                                <div className="flex flex-col items-center justify-center">
+                                    <span className="font-bold">{label}</span>
+                                    <span className="text-xs font-normal text-gray-500 dark:text-gray-400 mt-1 normal-case">
+                                        AVA = {tableAVAs[index].toFixed(2)} cm²
+                                    </span>
+                                </div>
                             </th>
                         ))}
                     </tr>
                     {isComparative && (
                          <tr>
-                            {conditionTitles.map(title => (
-                                <React.Fragment key={`${title}-sub`}>
-                                    <th scope="col" className="px-3 py-2 text-center font-semibold bg-blue-50 dark:bg-blue-900/20 border-l border-gray-200 dark:border-gray-600">{t.control}</th>
-                                    <th scope="col" className="px-3 py-2 text-center font-semibold bg-orange-50 dark:bg-orange-900/20">{t.test}</th>
+                            {conditionLabels.map(label => (
+                                <React.Fragment key={`${label}-sub`}>
+                                    <th scope="col" className="px-2 py-2 text-center font-semibold bg-blue-50 dark:bg-blue-900/20 border-l border-gray-200 dark:border-gray-600">{t.control}</th>
+                                    <th scope="col" className="px-2 py-2 text-center font-semibold bg-orange-50 dark:bg-orange-900/20">{t.test}</th>
                                 </React.Fragment>
                             ))}
                         </tr>
@@ -163,13 +166,13 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                             {t.hr}
                             <span className="text-xs text-gray-500 ml-1">(bpm)</span>
                         </th>
-                        {conditionTitles.map((title) => (
-                            <React.Fragment key={`${title}-hr`}>
-                                <td className="px-6 py-4 text-center border-l border-gray-200 dark:border-gray-700">
+                        {conditionLabels.map((label) => (
+                            <React.Fragment key={`${label}-hr`}>
+                                <td className="px-2 py-4 text-center border-l border-gray-200 dark:border-gray-700">
                                     {params.control.hr}
                                 </td>
                                 {isComparative && (
-                                    <td className="px-6 py-4 text-center">
+                                    <td className="px-2 py-4 text-center">
                                         {params.test.hr}
                                     </td>
                                 )}
@@ -181,13 +184,13 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                             {t.tempRef}
                             <span className="text-xs text-gray-500 ml-1">(°C)</span>
                         </th>
-                        {conditionTitles.map((title) => (
-                            <React.Fragment key={`${title}-temp`}>
-                                <td className="px-6 py-4 text-center border-l border-gray-200 dark:border-gray-700">
+                        {conditionLabels.map((label) => (
+                            <React.Fragment key={`${label}-temp`}>
+                                <td className="px-2 py-4 text-center border-l border-gray-200 dark:border-gray-700">
                                     {params.control.temperature.toFixed(1)}
                                 </td>
                                 {isComparative && (
-                                    <td className="px-6 py-4 text-center">
+                                    <td className="px-2 py-4 text-center">
                                         {params.test.temperature.toFixed(1)}
                                     </td>
                                 )}
@@ -199,13 +202,13 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                             {t.cd}
                             <span className="text-xs text-gray-500 ml-1">(Cd)</span>
                         </th>
-                        {conditionTitles.map((title) => (
-                            <React.Fragment key={`${title}-cd`}>
-                                <td className="px-6 py-4 text-center border-l border-gray-200 dark:border-gray-700">
+                        {conditionLabels.map((label) => (
+                            <React.Fragment key={`${label}-cd`}>
+                                <td className="px-2 py-4 text-center border-l border-gray-200 dark:border-gray-700">
                                     {params.control.c_d.toFixed(2)}
                                 </td>
                                 {isComparative && (
-                                    <td className="px-6 py-4 text-center">
+                                    <td className="px-2 py-4 text-center">
                                         {params.test.c_d.toFixed(2)}
                                     </td>
                                 )}
@@ -218,18 +221,18 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ results, isLoading, isCompa
                                 {metric.label}
                                 <span className="text-xs text-gray-500 ml-1">({metric.unit})</span>
                             </th>
-                            {conditionTitles.map((title, index) => {
+                            {conditionLabels.map((label, index) => {
                                 // Use exact calculated point
                                 const controlValue = (points.control[index][metric.key as keyof SimulationPoint] as number).toFixed(2);
                                 const testValue = (points.test[index][metric.key as keyof SimulationPoint] as number).toFixed(2);
                                 
                                 return (
-                                    <React.Fragment key={title}>
-                                        <td className="px-6 py-4 text-center border-l border-gray-200 dark:border-gray-700">
+                                    <React.Fragment key={label}>
+                                        <td className="px-2 py-4 text-center border-l border-gray-200 dark:border-gray-700">
                                             {controlValue}
                                         </td>
                                         {isComparative && (
-                                            <td className="px-6 py-4 text-center">
+                                            <td className="px-2 py-4 text-center">
                                                 {testValue}
                                             </td>
                                         )}
