@@ -33,6 +33,17 @@ const IntroductionContent: React.FC = () => {
                  <h2 className="text-xl font-extrabold text-center text-gray-900 dark:text-white mb-8">
                     EXERGY ANALYSIS OF THE HEART WITH AORTIC STENOSIS
                 </h2>
+
+                <div className="mb-10 bg-blue-50 dark:bg-blue-900/10 p-6 rounded-lg border border-blue-100 dark:border-blue-800/30">
+                    <p className="mb-4 text-justify">
+                        <strong>CardioExergy</strong> is an interactive scientific tool designed to assist students, researchers, and healthcare professionals in understanding cardiac bioenergetics under pathological conditions.
+                    </p>
+                    
+                    <h4 className="text-lg font-bold text-blue-700 dark:text-blue-300 mb-2">Objective</h4>
+                    <p className="text-justify">
+                        The main objective is to simulate the impact of <Highlight>Aortic Stenosis</Highlight> on the heart's energy efficiency. Unlike traditional approaches focusing only on pressure and flow (hemodynamics), this app uses <Highlight>Exergy Analysis</Highlight> (thermodynamics) to quantify the waste of useful energy (irreversibility) caused by the diseased valve.
+                    </p>
+                </div>
                 
                 <MainHeader>1. THEORETICAL FOUNDATION</MainHeader>
     
@@ -157,6 +168,17 @@ const IntroductionContent: React.FC = () => {
                 ANÁLISE EXERGÉTICA DO CORAÇÃO COM ESTENOSE AÓRTICA
             </h2>
             
+            <div className="mb-10 bg-blue-50 dark:bg-blue-900/10 p-6 rounded-lg border border-blue-100 dark:border-blue-800/30">
+                <p className="mb-4 text-justify">
+                    O <strong>CardioExergy</strong> é uma ferramenta científica interativa desenvolvida para auxiliar estudantes, pesquisadores e profissionais da saúde na compreensão da bioenergética cardíaca sob condições patológicas.
+                </p>
+                
+                <h4 className="text-lg font-bold text-blue-700 dark:text-blue-300 mb-2">Objetivo</h4>
+                <p className="text-justify">
+                    O objetivo principal é simular o impacto da <Highlight>Estenose Aórtica</Highlight> na eficiência energética do coração. Ao contrário das abordagens tradicionais que focam apenas em pressão e fluxo (hemodinâmica), este aplicativo utiliza a <Highlight>Análise de Exergia</Highlight> (termodinâmica) para quantificar o desperdício de energia útil (irreversibilidade) causado pela válvula doente.
+                </p>
+            </div>
+
             <MainHeader>1. FUNDAMENTAÇÃO TEÓRICA</MainHeader>
 
             <SectionTitle>1.1 O QUE É EXERGIA</SectionTitle>
