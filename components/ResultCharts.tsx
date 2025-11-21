@@ -148,10 +148,15 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
 
     const StenosisReferences = () => (
         <>
-            {/* Shaded Areas */}
+            {/* Shaded Areas - Matching the Table Colors */}
+            {/* Severe (< 1.0): Red */}
             <ReferenceArea x1={xAxisDomain[0]} x2={1.0} fill="#ef4444" fillOpacity={0.05} ifOverflow="visible" />
+            {/* Moderate (1.0 - 1.5): Amber/Yellow */}
             <ReferenceArea x1={1.0} x2={1.5} fill="#eab308" fillOpacity={0.05} ifOverflow="visible" />
+            {/* Mild (1.5 - 2.0): Emerald/Green */}
             <ReferenceArea x1={1.5} x2={2.0} fill="#10b981" fillOpacity={0.05} ifOverflow="visible" />
+            {/* Healthy (> 2.0): Blue */}
+            <ReferenceArea x1={2.0} x2={xAxisDomain[1]} fill="#3b82f6" fillOpacity={0.05} ifOverflow="visible" />
 
             {/* Dotted Lines */}
             <ReferenceLine x={1.0} stroke="gray" strokeDasharray="3 3" strokeOpacity={0.8} />
