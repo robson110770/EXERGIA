@@ -258,7 +258,7 @@ const ResultCharts: React.FC<ResultChartsProps> = ({ results, isLoading, isCompa
                         {isComparative && <Legend layout="vertical" verticalAlign="middle" align="right" />}
                         <StenosisReferences />
                         <Line type="monotone" dataKey="eta2_control" name={isComparative ? `η₂ (${t.control})` : "η₂"} stroke="#10b981" strokeWidth={2} dot={false} />
-                        {isComparative && <Line type="monotone" dataKey="eta2_test" name={`η₂ (${t.test})`} stroke="#14b8a6" strokeDasharray="5 5" strokeWidth={2} dot={false} />}
+                        {isComparative && <Line type="monotone" dataKey="eta2_test" name={`η₂ (${t.test})`} stroke="#d946ef" strokeDasharray="5 5" strokeWidth={2} dot={false} /> /* Updated to Magenta/Fuchsia */}
                     </LineChart>
                 </ResponsiveContainer>
             </ChartCard>
