@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -38,7 +37,8 @@ const TeamContent: React.FC = () => {
             desc: "Conheça os pesquisadores e especialistas responsáveis pelo desenvolvimento científico e técnico desta ferramenta de análise exergética.",
             titles: {
                 me: "Engenheira Mecânica e Mestranda em Engenharia Biomédica",
-                dr: "Doutor em Engenharia Biomédica"
+                biotech: "Doutor em Biotecnologia",
+                biomed: "Doutor em Engenharia Biomédica"
             },
             maria: {
                 p1: "Graduada em Engenharia Mecânica pela Universidade de Mogi das Cruzes (2024) e Ensino Médio pelo Colégio São Marcos (2019). Tem experiência na área de Engenharia Mecânica e participou de projetos de Iniciação Científica."
@@ -61,7 +61,8 @@ const TeamContent: React.FC = () => {
             desc: "Meet the researchers and specialists responsible for the scientific and technical development of this exergy analysis tool.",
             titles: {
                 me: "Mechanical Engineer and Master's Student in Biomedical Engineering",
-                dr: "PhD in Biomedical Engineering"
+                biotech: "PhD in Biotechnology",
+                biomed: "PhD in Biomedical Engineering"
             },
             maria: {
                 p1: "Graduated in Mechanical Engineering from the University of Mogi das Cruzes (2024) and High School from Colégio São Marcos (2019). Has experience in Mechanical Engineering and participated in Scientific Initiation projects."
@@ -98,7 +99,7 @@ const TeamContent: React.FC = () => {
 
                 <img 
                     src="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.34.57.jpeg" 
-                    alt="Logo Lab" 
+                    alt="Logo 2" 
                     className="h-20 md:h-24 object-contain"
                 />
             </div>
@@ -122,7 +123,7 @@ const TeamContent: React.FC = () => {
                 {/* Fabiano Menegidio */}
                 <ResearcherCard 
                     name="2. Prof. Dr. Fabiano Bezerra Menegidio" 
-                    title={t.titles.dr}
+                    title={t.titles.biotech}
                     imageUrl="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.29.25.jpeg"
                     bio={
                         <>
@@ -138,7 +139,7 @@ const TeamContent: React.FC = () => {
                 {/* Robson Rodrigues */}
                 <ResearcherCard 
                     name="3. Prof. Dr. Robson Rodrigues da Silva" 
-                    title={t.titles.dr}
+                    title={t.titles.biomed}
                     imageUrl="http://rodrigues.mat.br/wp-content/uploads/2025/11/WhatsApp-Image-2025-11-21-at-12.25.37.jpeg"
                     bio={
                         <>
