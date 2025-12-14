@@ -10,6 +10,7 @@ import IntroductionContent from './components/IntroductionContent';
 import HelpContent from './components/HelpContent';
 import TeamContent from './components/TeamContent';
 import ActivitiesContent from './components/ActivitiesContent';
+import SplashScreen from './components/SplashScreen';
 import { useLanguage } from './contexts/LanguageContext';
 
 // Define defaults based on Roll et al. (2019)
@@ -24,6 +25,8 @@ const DEFAULT_PARAMS: SimulationParams = {
 
 const App: React.FC = () => {
     const { language, setLanguage } = useLanguage();
+    const [showSplash, setShowSplash] = useState(true); // Control Splash Screen visibility
+    
     const [params, setParams] = useState<{
         control: SimulationParams;
         test: SimulationParams;
@@ -139,7 +142,8 @@ const App: React.FC = () => {
             activities: "ATIVIDADES",
             help: "AJUDA",
             team: "EQUIPE",
-            footer: "Desenvolvido como uma ferramenta de visualização interativa."
+            footer: "Desenvolvido como uma ferramenta de visualização interativa.",
+            backToSplash: "Voltar para a Tela Inicial"
         },
         en: {
             subtitle: "EXERGY ANALYSIS OF THE HEART WITH AORTIC STENOSIS",
@@ -154,22 +158,32 @@ const App: React.FC = () => {
             activities: "ACTIVITIES",
             help: "HELP",
             team: "TEAM",
-            footer: "Developed as an interactive visualization tool."
+            footer: "Developed as an interactive visualization tool.",
+            backToSplash: "Back to Home Screen"
         }
     }[language];
 
+    // Render Splash Screen if state is true
+    if (showSplash) {
+        return <SplashScreen onStart={() => setShowSplash(false)} />;
+    }
+
     return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans">
+        <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans animate-fade-in">
             <header className="bg-white dark:bg-gray-800 shadow-md">
                 <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-                    <div>
-                        <h1 className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400">
+                    <div 
+                        onClick={() => setShowSplash(true)} 
+                        className="cursor-pointer group"
+                        title={t.backToSplash}
+                    >
+                        <h1 className="text-2xl md:text-3xl font-bold text-blue-600 dark:text-blue-400 group-hover:text-blue-800 dark:group-hover:text-blue-300 transition-colors">
                             CardioExergy
                         </h1>
                         <p className="text-sm font-medium text-gray-900 dark:text-gray-100 mt-1">
                             {t.subtitle}
                         </p>
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-0.5 group-hover:underline decoration-blue-400">
                             {t.base}
                         </p>
                     </div>
