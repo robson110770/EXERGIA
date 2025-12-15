@@ -3,9 +3,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Chat } from "@google/genai";
 import { useLanguage } from '../contexts/LanguageContext';
 
-// Initialize Gemini Client
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
 interface Message {
     role: 'user' | 'model';
     text: string;
@@ -51,6 +48,10 @@ const ChatContent: React.FC = () => {
 
     const handleSend = async () => {
         if (!inputText.trim() || isLoading) return;
+
+        // Initialize Gemini Client here (lazy initialization) to ensure environment variables are loaded
+        // and to avoid top-level 'process is not defined' errors during import.
+        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
         const userMessage = inputText;
         setInputText('');
