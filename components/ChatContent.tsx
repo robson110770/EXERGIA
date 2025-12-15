@@ -49,16 +49,51 @@ const ChatContent: React.FC = () => {
     const handleSend = async () => {
         if (!inputText.trim() || isLoading) return;
 
-        // Initialize Gemini Client here (lazy initialization) to ensure environment variables are loaded
-        // and to avoid top-level 'process is not defined' errors during import.
-        const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
         const userMessage = inputText;
+        
+        // 1. Update UI immediately so the user sees their message and input clears
         setInputText('');
         setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
         setIsLoading(true);
 
         try {
+            // 2. Safely retrieve API Key preventing ReferenceError on 'process'
+            let apiKey = '';
+            
+            // Check process.env in a safe way (standard Node/Vite substitution)
+            try {
+                if (typeof process !== 'undefined' && process.env) {
+                    apiKey = process.env.API_KEY || '';
+                }
+            } catch (e) {
+                // Ignore
+            }
+
+            // Fallback to window.process (our polyfill)
+            if (!apiKey && typeof window !== 'undefined') {
+                // @ts-ignore
+                apiKey = (window as any).process?.env?.API_KEY;
+            }
+
+            // Fallback to import.meta.env (Vite native) check if available
+            if (!apiKey) {
+                try {
+                    // @ts-ignore
+                    if (import.meta && import.meta.env) {
+                        // @ts-ignore
+                        apiKey = import.meta.env.VITE_API_KEY;
+                    }
+                } catch(e) {}
+            }
+
+            if (!apiKey) {
+                console.error("API Key not found in process.env, window.process, or import.meta.env");
+                throw new Error("API Key not configured.");
+            }
+
+            // Initialize Gemini Client inside try-catch to handle config errors
+            const ai = new GoogleGenAI({ apiKey });
+
             // System instruction defining the persona and technical context of the app
             const systemInstruction = `
             You are the expert AI assistant for the "CardioExergy" application.
@@ -103,8 +138,11 @@ const ChatContent: React.FC = () => {
             setMessages(prev => [...prev, { role: 'model', text: responseText }]);
 
         } catch (error) {
-            console.error("Chat error:", error);
-            setMessages(prev => [...prev, { role: 'model', text: language === 'pt' ? "Desculpe, ocorreu um erro ao processar sua solicitação." : "Sorry, an error occurred processing your request." }]);
+            console.error("Chat error details:", error);
+            const errorMsg = language === 'pt' 
+                ? "Desculpe, ocorreu um erro ao conectar com a IA. Verifique se a chave API (VITE_API_KEY) está configurada corretamente." 
+                : "Sorry, an error occurred connecting to AI. Check if API key (VITE_API_KEY) is configured correctly.";
+            setMessages(prev => [...prev, { role: 'model', text: errorMsg }]);
         } finally {
             setIsLoading(false);
         }

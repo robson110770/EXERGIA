@@ -365,12 +365,12 @@ const AnalysisContent: React.FC<AnalysisContentProps> = ({ results, isLoading, i
         pt: {
             loading: "Carregando análise...",
             noData: "Nenhum dado para analisar. Execute uma simulação para ver os resultados.",
-            title: "Análise Dinâmica dos Resultados da Simulação"
+            title: "Resultados"
         },
         en: {
             loading: "Loading analysis...",
             noData: "No data to analyze. Run simulation to see results.",
-            title: "Dynamic Simulation Results Analysis"
+            title: "Results"
         }
     }[language];
 
