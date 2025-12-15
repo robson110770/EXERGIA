@@ -10,6 +10,7 @@ import IntroductionContent from './components/IntroductionContent';
 import HelpContent from './components/HelpContent';
 import TeamContent from './components/TeamContent';
 import ActivitiesContent from './components/ActivitiesContent';
+import ChatContent from './components/ChatContent';
 import SplashScreen from './components/SplashScreen';
 import { useLanguage } from './contexts/LanguageContext';
 
@@ -39,7 +40,7 @@ const App: React.FC = () => {
         test: SimulationResults;
     } | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-    const [view, setView] = useState<'introduction' | 'charts' | 'data' | 'analysis' | 'activities' | 'help' | 'team'>('introduction');
+    const [view, setView] = useState<'introduction' | 'charts' | 'data' | 'analysis' | 'activities' | 'help' | 'team' | 'chat'>('introduction');
     const [tableAVAs, setTableAVAs] = useState<[number, number, number, number]>([1.0, 1.5, 2.0, 3.5]);
     const [isExportMenuOpen, setIsExportMenuOpen] = useState(false);
     const exportMenuRef = useRef<HTMLDivElement>(null);
@@ -140,6 +141,7 @@ const App: React.FC = () => {
             data: "VISUALIZAR DADOS",
             analysis: "ANÁLISE DOS RESULTADOS",
             activities: "ATIVIDADES",
+            chat: "CHATBOT IA",
             help: "AJUDA",
             team: "EQUIPE",
             footer: "Desenvolvido como uma ferramenta de visualização interativa.",
@@ -156,6 +158,7 @@ const App: React.FC = () => {
             data: "VIEW DATA",
             analysis: "RESULTS ANALYSIS",
             activities: "ACTIVITIES",
+            chat: "AI CHATBOT",
             help: "HELP",
             team: "TEAM",
             footer: "Developed as an interactive visualization tool.",
@@ -290,6 +293,12 @@ const App: React.FC = () => {
                             >
                                 {t.activities}
                             </button>
+                            <button
+                                onClick={() => setView('chat')}
+                                className={`${baseButtonClass} ${view === 'chat' ? 'bg-gradient-to-r from-blue-700 to-indigo-600 text-white shadow-md transform scale-105' : 'bg-indigo-50 text-indigo-700 border border-indigo-100 hover:bg-indigo-100 hover:text-indigo-900 dark:bg-gray-800 dark:text-indigo-300 dark:border-gray-700'}`}
+                            >
+                                {t.chat}
+                            </button>
                              <button
                                 onClick={() => setView('help')}
                                 className={`${baseButtonClass} ${view === 'help' ? activeButtonClass : inactiveButtonClass}`}
@@ -309,6 +318,7 @@ const App: React.FC = () => {
                             {view === 'data' && <SummaryTable results={results} isLoading={isLoading} isComparative={isComparative} tableAVAs={tableAVAs} params={params} />}
                             {view === 'analysis' && <AnalysisContent results={results} isLoading={isLoading} isComparative={isComparative} params={params} tableAVAs={tableAVAs} />}
                             {view === 'activities' && <ActivitiesContent />}
+                            {view === 'chat' && <ChatContent />}
                             {view === 'help' && <HelpContent />}
                             {view === 'team' && <TeamContent />}
                         </div>
